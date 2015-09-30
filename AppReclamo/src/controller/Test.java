@@ -1,5 +1,8 @@
 package controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import modelo.Canje;
 import modelo.Catalogo;
 import modelo.Ciudadano;
@@ -13,33 +16,36 @@ import com.db4o.ta.TransparentPersistenceSupport;
 
 import dao.CanjeDaoImpl;
 import dao.CatalogoDaoImpl;
+import dao.CiudadanoDaoImpl;
+import dao.ProductoDao;
+import dao.ProductoDaoImpl;
 
 public class Test {
 
 	public static void main(String[] args) {
 
-
-		CatalogoDaoImpl catdao= new CatalogoDaoImpl();
-		Catalogo catalogo= new Catalogo("catalogo nuevo", null);
+		CatalogoDaoImpl catdao = new CatalogoDaoImpl();
+		Catalogo catalogo = new Catalogo("catalogo nuevo");
 		catdao.salvar(catalogo);
-		
-	ObjectSet<Catalogo>	cat =catdao.buscarTodos();
-	Producto prod= new Producto(1, "Notebook", 20);
-	CanjeDaoImpl candao= new CanjeDaoImpl();
-	Canje can= new Canje("mal estacionado", "27/09/2015", prod);
-	candao.salvar(can);
-	ObjectSet<Canje> canj=candao.buscarTodos();
-	
-	/*
+
+		ObjectSet<Catalogo> catalogos = catdao.buscarTodos();
+
+		Producto prod = new Producto(5, "Notebook", 20);
+		ProductoDaoImpl prodao = new ProductoDaoImpl();
+		prodao.salvar(prod);
+		CanjeDaoImpl candao = new CanjeDaoImpl();
+		// Crear el Canje de un Producto
+
+		Canje can = new Canje("mal estacionado", "27/09/2015");
+		can.setProducto(prod);
+		candao.salvar(can);
+		ObjectSet<Canje> canj = candao.buscarTodos();
+
 		Ciudadano ciu = new Ciudadano("Guillermo", "Difabio", 36849832,
-				"guillermodifabio@gmail.com", 3, null);
-		for (int i = 0; i < 3; i++) {
-			 car.snapshot();
-		}
-		db.store(ciu);
-	db.close();
-	
-*/
+				"guillermodifabio@gmail.com", 3);
+		CiudadanoDaoImpl ciudao = new CiudadanoDaoImpl();
+		ciudao.salvar(ciu);
+
 	}
 
 }

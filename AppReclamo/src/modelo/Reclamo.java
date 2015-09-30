@@ -14,14 +14,13 @@ public class Reclamo implements Activatable {
 	ArrayList<Evento> eventos;
 	private transient Activator _activator;
 
-public Reclamo(String fecha, String descripcion, String direccion,
-			Categoria categoria, ArrayList<Evento> eventos) {
+public Reclamo(String fecha, String descripcion, String direccion) {
 		super();
 		this.fecha = fecha;
 		this.descripcion = descripcion;
 		this.direccion = direccion;
-		this.categoria = categoria;
-		this.eventos = eventos;
+		this.categoria = null;
+		this.eventos = null;
 	}
 
 	public ArrayList<Evento> getEventos() {

@@ -11,10 +11,10 @@ String nombre;
 ArrayList<Producto> productos;
 private transient Activator _activator;
 
-public Catalogo(String nombre, ArrayList<Producto> productos) {
+public Catalogo(String nombre) {
 	super();
 	this.nombre = nombre;
-	this.productos = productos;
+	this.productos = null;
 }
 public String getNombre() {
 	activate(ActivationPurpose.READ);

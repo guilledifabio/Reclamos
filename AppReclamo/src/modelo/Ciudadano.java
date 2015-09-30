@@ -18,14 +18,14 @@ public class Ciudadano implements Activatable {
 	private transient Activator _activator;
 	
 	public Ciudadano(String nombre, String apellido, int dni, String email,
-			int puntos, ArrayList<Canje> canjes) {
+			int puntos) {
 		super();
 		this.nombre = nombre;
 		this.apellido = apellido;
 		this.dni = dni;
 		this.email = email;
 		this.puntos = puntos;
-		this.canjes = canjes;
+		this.canjes = null;
 	}
 	public String getNombre() {
 		activate(ActivationPurpose.READ);

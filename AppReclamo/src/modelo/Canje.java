@@ -4,18 +4,19 @@ import com.db4o.activation.ActivationPurpose;
 import com.db4o.activation.Activator;
 import com.db4o.ta.Activatable;
 
-public class Canje implements Activatable{
+public class Canje implements Activatable {
 	String descripcion;
 	String fecha;
 	Producto producto;
 	private transient Activator _activator;
-	public Canje(String descripcion, String fecha, Producto producto) {
+
+	public Canje(String descripcion, String fecha) {
 		super();
 		this.descripcion = descripcion;
 		this.fecha = fecha;
-		this.producto = producto;
+		this.producto = null;
 	}
-	
+
 	public String getDescripcion() {
 		activate(ActivationPurpose.READ);
 		return descripcion;
@@ -46,21 +47,20 @@ public class Canje implements Activatable{
 		this.producto = producto;
 	}
 
-	
-
 	public void activate(ActivationPurpose purpose) {
-		if(_activator != null) {
-		_activator.activate(purpose);
+		if (_activator != null) {
+			_activator.activate(purpose);
 		}
-		}
-		public void bind(Activator activator) {
+	}
+
+	public void bind(Activator activator) {
 		if (_activator == activator) {
-		return;
+			return;
 		}
 		if (activator != null && _activator != null) {
-		throw new IllegalStateException();
+			throw new IllegalStateException();
 		}
 		_activator = activator;
-		}
+	}
 
 }
