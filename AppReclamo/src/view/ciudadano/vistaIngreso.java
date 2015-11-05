@@ -21,7 +21,7 @@ public class vistaIngreso extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public vistaIngreso(Controlador controlador, JPanel panelCentral, JPanel panelLateral, JFrame frame) {
+	public vistaIngreso(final Controlador controlador, final JPanel panelCentral,final JPanel panelLateral, final JFrame frame) {
 		setLayout(null);
 		setBounds(98, 0, 430, 300);
 		textDni = new JTextField();
@@ -41,9 +41,11 @@ public class vistaIngreso extends JPanel {
 				if (dni.length() == 0) {
 					JOptionPane.showMessageDialog(frame, "Ingrese un DNI");
 				}
-				
+				System.out.println("DNI : "+dni);
 				controlador.ConectarAPI();
 				if (controlador.Ingresar(Integer.parseInt(dni))) {
+					System.out.println("entro DNI : "+dni);
+					JOptionPane.showMessageDialog(frame, "El usuario con dni existe");
 					//usuario existe cambiar vistas
 				} else {
 					JOptionPane.showMessageDialog(frame, "El usuario con dni ingresado no existe");

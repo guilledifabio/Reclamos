@@ -1,6 +1,7 @@
 package modelo;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.db4o.activation.ActivationPurpose;
 import com.db4o.activation.Activator;
@@ -8,13 +9,13 @@ import com.db4o.ta.Activatable;
 
 public class Catalogo implements Activatable {
 String nombre;
-ArrayList<Producto> productos;
+List productos;
 private transient Activator _activator;
 
 public Catalogo(String nombre) {
 	super();
 	this.nombre = nombre;
-	this.productos = null;
+	this.productos = new ArrayList();
 }
 public String getNombre() {
 	activate(ActivationPurpose.READ);
@@ -24,11 +25,11 @@ public void setNombre(String nombre) {
 	activate(ActivationPurpose.WRITE);
 	this.nombre = nombre;
 }
-public ArrayList<Producto> getProductos() {
+public List getProductos() {
 	activate(ActivationPurpose.READ);
 	return productos;
 }
-public void setProductos(ArrayList<Producto> productos) {
+public void setProductos(List productos) {
 	activate(ActivationPurpose.WRITE);
 	this.productos = productos;
 }

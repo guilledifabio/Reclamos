@@ -1,6 +1,7 @@
 package modelo;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.db4o.activation.ActivationPurpose;
 import com.db4o.activation.Activator;
@@ -11,7 +12,7 @@ public class Reclamo implements Activatable {
 	String descripcion;
 	String direccion;
 	Categoria categoria;
-	ArrayList<Evento> eventos;
+	List eventos;
 	private transient Activator _activator;
 
 public Reclamo(String fecha, String descripcion, String direccion) {
@@ -20,15 +21,15 @@ public Reclamo(String fecha, String descripcion, String direccion) {
 		this.descripcion = descripcion;
 		this.direccion = direccion;
 		this.categoria = null;
-		this.eventos = null;
+		this.eventos = new ArrayList();
 	}
 
-	public ArrayList<Evento> getEventos() {
+	public List getEventos() {
 		activate(ActivationPurpose.READ);
 		return eventos;
 	}
 
-	public void setEventos(ArrayList<Evento> eventos) {
+	public void setEventos(List eventos) {
 		activate(ActivationPurpose.WRITE);
 		this.eventos = eventos;
 	}

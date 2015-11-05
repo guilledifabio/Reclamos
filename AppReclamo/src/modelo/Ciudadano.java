@@ -1,6 +1,7 @@
 package modelo;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.db4o.activation.ActivationPurpose;
 import com.db4o.activation.Activator;
@@ -14,7 +15,7 @@ public class Ciudadano implements Activatable {
 	int dni;
 	String email;
 	int puntos;
-	ArrayList<Canje> canjes;
+	List  canjes;
 	private transient Activator _activator;
 	
 	public Ciudadano(String nombre, String apellido, int dni, String email,
@@ -25,7 +26,7 @@ public class Ciudadano implements Activatable {
 		this.dni = dni;
 		this.email = email;
 		this.puntos = puntos;
-		this.canjes = null;
+		this.canjes = new ArrayList();
 	}
 	public String getNombre() {
 		activate(ActivationPurpose.READ);
@@ -67,11 +68,11 @@ public class Ciudadano implements Activatable {
 		activate(ActivationPurpose.WRITE);
 		this.puntos = puntos;
 	}
-	public ArrayList<Canje> getCanjes() {
+	public List getCanjes() {
 		activate(ActivationPurpose.READ);
 		return canjes;
 	}
-	public void setCanjes(ArrayList<Canje> canjes) {
+	public void setCanjes(List canjes) {
 		activate(ActivationPurpose.WRITE);
 		this.canjes = canjes;
 	}

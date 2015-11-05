@@ -19,7 +19,7 @@ public class vistaRegistro extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public vistaRegistro(Controlador controlador, JPanel panelCentral, JPanel panelLateral, JFrame frame) {
+	public vistaRegistro(final Controlador controlador, final JPanel panelCentral, final JPanel panelLateral, final JFrame frame) {
 		setLayout(null);
 		setBounds(98, 0, 430, 300);
 		

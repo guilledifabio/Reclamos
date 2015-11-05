@@ -21,9 +21,10 @@ public class Reclamos {
 	}
 	
 	public Ciudadano buscarCiudadano(int DNI) {
+
 		CiudadanoDaoImpl ciudadanoDAO = new CiudadanoDaoImpl();
-		ObjectSet<Ciudadano> ciudadanos = ciudadanoDAO.buscarTodos();
-		
+		ObjectSet<Ciudadano> ciudadanos = ciudadanoDAO.buscarTodos(db);
+		System.out.println("buscar ciudadano "+ciudadanos.size());
 		for (Ciudadano ciudadano : ciudadanos) {
 			if (ciudadano.getDni() == DNI) {
 				return ciudadano;

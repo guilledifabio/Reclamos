@@ -11,7 +11,7 @@ public class panelLateral extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public panelLateral(JFrame frame) {
+	public panelLateral(final JFrame frame) {
 		setBounds(0, 0, 99, 300);
 		setLayout(null);
 		

@@ -3,8 +3,11 @@ package dao;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 
+import modelo.Ciudadano;
+
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
+import com.db4o.query.Query;
 
 
 
@@ -36,16 +39,12 @@ public abstract class GenericDaoImpl<T, Id extends Serializable> implements
 	}
 */
 	
-	public ObjectSet<T> buscarTodos() {
-		ObjectContainer db = Helper.ConnectionDB("reclamos");
-		ObjectSet<T> res =db.queryByExample(claseDePersistencia.getClass());
-		System.out.println("entro");
-		for (Object o : res) {
-	        System.out.println(o);
-	        
-	    }	
-		db.close();
-		return res;
+	public ObjectSet<T> buscarTodos(ObjectContainer db) {
+		Query q = db.query();
+		q.constrain(Ciudadano.class);
+		ObjectSet result = q.execute();
+			
+		return result;
 		
 	}
 /*
@@ -68,10 +67,10 @@ public abstract class GenericDaoImpl<T, Id extends Serializable> implements
 	}*/
 
 	public void salvar(T objeto) {
-		ObjectContainer db = Helper.ConnectionDB("reclamos");
-		db.store(objeto);
+		
+		
 		System.out.println("Guardado " + objeto);
-		db.close();
+		
 		
 	}
 /*
