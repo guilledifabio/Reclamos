@@ -42,7 +42,7 @@ public class vistaIngreso extends JPanel {
 					JOptionPane.showMessageDialog(frame, "Ingrese un DNI");
 				}
 				System.out.println("DNI : "+dni);
-				controlador.ConectarAPI();
+				
 				if (controlador.Ingresar(Integer.parseInt(dni))) {
 					System.out.println("entro DNI : "+dni);
 					JOptionPane.showMessageDialog(frame, "El usuario con dni existe");

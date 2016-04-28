@@ -11,7 +11,7 @@ import modelo.Ciudadano;
 public interface CiudadanoDao {
 	// public abstract void borrar(Ciudadano ciu);
 
-		public abstract void salvar(Ciudadano ciu);
+		public abstract void insertar(ObjectContainer db,Ciudadano ciu);
 
 		public abstract List<Ciudadano> buscarTodos(ObjectContainer db);
 

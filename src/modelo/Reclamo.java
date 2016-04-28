@@ -3,6 +3,7 @@ package modelo;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.db4o.ObjectContainer;
 import com.db4o.activation.ActivationPurpose;
 import com.db4o.activation.Activator;
 import com.db4o.ta.Activatable;
@@ -86,6 +87,13 @@ public Reclamo(String fecha, String descripcion, String direccion) {
 		throw new IllegalStateException();
 		}
 		_activator = activator;
+		}
+		
+		public void ActualizarPuntos (Ciudadano ciu){
+			int puntos =ciu.getPuntos();
+			
+			ciu.setPuntos(puntos+this.categoria.getPuntos());
+			
 		}
 
 }

@@ -48,6 +48,7 @@ public class vistaPrincipal {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		controlador.ConectarAPI();
 		frame = new JFrame();
 		frame.setBounds(100, 100, 617, 357);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

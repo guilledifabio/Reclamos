@@ -2,11 +2,14 @@ package dao;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
+import java.util.List;
 
 import modelo.Ciudadano;
 
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
+import com.db4o.ext.Db4oException;
+import com.db4o.query.Predicate;
 import com.db4o.query.Query;
 
 
@@ -38,15 +41,18 @@ public abstract class GenericDaoImpl<T, Id extends Serializable> implements
 		
 	}
 */
-	
+
 	public ObjectSet<T> buscarTodos(ObjectContainer db) {
+		
 		Query q = db.query();
-		q.constrain(Ciudadano.class);
+		q.constrain(claseDePersistencia);
 		ObjectSet result = q.execute();
 			
 		return result;
 		
 	}
+
+	
 /*
 	public void borrar(T objeto) {
 		EntityManagerFactory factoriaSession = JPAHelper.getJPAFactory();
@@ -66,29 +72,15 @@ public abstract class GenericDaoImpl<T, Id extends Serializable> implements
 		}
 	}*/
 
-	public void salvar(T objeto) {
+	
+	public void insertar(ObjectContainer db,T objeto) {
 		
-		
-		System.out.println("Guardado " + objeto);
-		
-		
-	}
-/*
-	public void insertar(T objeto) {
-		EntityManagerFactory factoriaSession = JPAHelper.getJPAFactory();
-		EntityManager manager = factoriaSession.createEntityManager();
-		EntityTransaction tx = null;
 		try {
-			tx = manager.getTransaction();
-			tx.begin();
-			manager.persist(objeto);
-			tx.commit();
-		} catch (PersistenceException e) {
-			tx.rollback();
-			throw e;
-		} finally {
-			manager.close();
-		}
+		db.store(objeto);
+		System.out.println("Guardado " + objeto);
+		} catch (Db4oException  e) {
+			System.out.println("Error al guardar : " + e.getMessage());
+		} 
 
-	}*/
+	}
 }
