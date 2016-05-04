@@ -1,13 +1,15 @@
 package modelo;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import com.db4o.activation.ActivationPurpose;
 import com.db4o.activation.Activator;
 import com.db4o.ta.Activatable;
-
-
 
 public class Ciudadano implements Activatable {
 	String nombre;
@@ -15,11 +17,11 @@ public class Ciudadano implements Activatable {
 	int dni;
 	String email;
 	int puntos;
-	List  canjes;
+	List<Canje> canjes;
+	List<Reclamo> reclamos;
 	private transient Activator _activator;
-	
-	public Ciudadano(String nombre, String apellido, int dni, String email,
-			int puntos) {
+
+	public Ciudadano(String nombre, String apellido, int dni, String email, int puntos) {
 		super();
 		this.nombre = nombre;
 		this.apellido = apellido;
@@ -27,67 +29,190 @@ public class Ciudadano implements Activatable {
 		this.email = email;
 		this.puntos = puntos;
 		this.canjes = new ArrayList();
+		this.reclamos = new ArrayList();
 	}
+
 	public String getNombre() {
 		activate(ActivationPurpose.READ);
 		return nombre;
 	}
+
 	public void setNombre(String nombre) {
 		activate(ActivationPurpose.WRITE);
 		this.nombre = nombre;
 	}
+
 	public String getApellido() {
 		activate(ActivationPurpose.READ);
 		return apellido;
 	}
+
 	public void setApellido(String apellido) {
 		activate(ActivationPurpose.WRITE);
 		this.apellido = apellido;
 	}
+
 	public int getDni() {
 		activate(ActivationPurpose.READ);
 		return dni;
 	}
+
 	public void setDni(int dni) {
 		activate(ActivationPurpose.WRITE);
 		this.dni = dni;
 	}
+
 	public String getEmail() {
 		activate(ActivationPurpose.READ);
 		return email;
 	}
+
 	public void setEmail(String email) {
 		activate(ActivationPurpose.WRITE);
 		this.email = email;
 	}
+
 	public int getPuntos() {
 		activate(ActivationPurpose.READ);
 		return puntos;
 	}
+
 	public void setPuntos(int puntos) {
 		activate(ActivationPurpose.WRITE);
 		this.puntos = puntos;
 	}
+
 	public List getCanjes() {
 		activate(ActivationPurpose.READ);
 		return canjes;
 	}
+
 	public void setCanjes(List canjes) {
 		activate(ActivationPurpose.WRITE);
 		this.canjes = canjes;
 	}
+
+	public List<Reclamo> getReclamos() {
+		activate(ActivationPurpose.READ);
+		return reclamos;
+	}
+
+	public void setReclamos(List<Reclamo> reclamos) {
+		activate(ActivationPurpose.WRITE);
+		this.reclamos = reclamos;
+	}
+
+	public void realizarReclamo(Reclamo reclamo) {
+		Integer pts = null;
+		Calendar cal = null;
+
+		try {
+
+			SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
+			Date primavera1 = formateador.parse("21/08/2016");
+			Date primavera2 = formateador.parse("21/12/2016");
+			Date diaa = formateador.parse("27/08/2016");
+			// dia=hoy;
+			cal = Calendar.getInstance();
+			cal.setTime(diaa);
+			int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+
+			if (diaa.before(primavera2) && diaa.after(primavera1)
+					&& (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY)) { // Finde
+				// en
+				// Periodo
+				// de
+				// Primavera
+				System.out.println("Entro en primavera");
+				System.out.println("ES FINDEEE");
+				pts = reclamo.getCategoria().getPuntos() * 2;// Duplico
+																// los
+																// puntos
+
+			} else {
+
+				pts = reclamo.getCategoria().getPuntos();
+			}
+			this.setPuntos(this.getPuntos() + pts);
+			this.reclamos.add(reclamo);
+
+			System.out
+					.println("Se realizo el Reclamo " + reclamo.descripcion + " correctamente por: " + pts + " puntos");
+
+		} catch (ParseException e) {
+			System.out.println("Se Produjo un Error!!!  " + e.getMessage());
+		}
+
+	}// Obtengo
+		// la
+		// categoria
+		// del
+		// Reclamo
+		// y
+		// actualizo
+		// los
+		// puntos
+		// del
+		// Ciudadano
+
+	public void CanjearPuntos(Producto pro) {
+		Integer pts = null;
+		Calendar cal = null;
+		// Date hoy=new Date();
+		try {
+			if (this.getPuntos() < pro.getPuntosrequeridos()) {
+
+				System.out.println("No tiene los Puntos requeridos para realizar el canje ");
+
+			} else {
+				SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
+				Date primavera1 = formateador.parse("21/08/2016");
+				Date primavera2 = formateador.parse("21/12/2016");
+				Date dia = formateador.parse("22/08/2016");
+				// dia=hoy;
+				cal = Calendar.getInstance();
+				cal.setTime(dia);
+				int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+				if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
+
+					System.out.println("ES FINDEEE");
+
+				}
+				if (dia.before(primavera2) && dia.after(primavera1) && this.puntos > 10) { // Periodo
+																							// de
+																							// Primavera
+					System.out.println("Entro en primavera");
+					pts = this.getPuntos() - (pro.getPuntosrequeridos() / 2);
+
+				} else {
+
+					pts = this.getPuntos() - (pro.getPuntosrequeridos());
+				}
+				this.setPuntos(pts);
+				Canje can = new Canje("22/08/2016");
+				can.setProducto(pro);
+				this.canjes.add(can);
+				System.out.println("Se realizo el canje correctamente por: " + pts + " puntos");
+
+			}
+		} catch (ParseException e) {
+			System.out.println("Se Produjo un Error!!!  " + e.getMessage());
+		}
+	}
+
 	public void activate(ActivationPurpose purpose) {
-		if(_activator != null) {
-		_activator.activate(purpose);
+		if (_activator != null) {
+			_activator.activate(purpose);
 		}
-		}
-		public void bind(Activator activator) {
+	}
+
+	public void bind(Activator activator) {
 		if (_activator == activator) {
-		return;
+			return;
 		}
 		if (activator != null && _activator != null) {
-		throw new IllegalStateException();
+			throw new IllegalStateException();
 		}
 		_activator = activator;
-		}
+	}
 }

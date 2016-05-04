@@ -29,6 +29,7 @@ public Reclamo(String fecha, String descripcion, String direccion) {
 		activate(ActivationPurpose.READ);
 		return eventos;
 	}
+	
 
 	public void setEventos(List eventos) {
 		activate(ActivationPurpose.WRITE);

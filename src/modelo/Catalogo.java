@@ -47,5 +47,10 @@ public void activate(ActivationPurpose purpose) {
 	}
 	_activator = activator;
 	}
+	@Override
+	public String toString() {
+		return "Catalogo [nombre=" + nombre + ", productos=" + productos + "]";
+	}
+	
 
 }

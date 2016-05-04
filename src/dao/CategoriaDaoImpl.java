@@ -22,7 +22,7 @@ public class CategoriaDaoImpl extends GenericDaoImpl<Categoria, Serializable> im
 			found.setNombre(nombrenuevo);
 			found.setDescripcion(desc);
 			found.setPuntos(puntos);
-			db.store(found);
+			// db.store(found); Persistencia transparente
 			System.out.println("Modifacacion correcta");
 		} catch (Db4oException e) {
 			System.out.println("Error: " + e.getMessage());
@@ -30,7 +30,7 @@ public class CategoriaDaoImpl extends GenericDaoImpl<Categoria, Serializable> im
 
 	}
 
-	public void eliminar(ObjectContainer db, final String nombre) {
+	public void eliminarPorNombre(ObjectContainer db, final String nombre) {
 		try {
 			List<Categoria> result = db.query(new Predicate<Categoria>() {
 				public boolean match(Categoria cat) {
@@ -39,12 +39,11 @@ public class CategoriaDaoImpl extends GenericDaoImpl<Categoria, Serializable> im
 			});
 			Categoria found = (Categoria) result.get(0);
 			db.delete(found);
-			System.out.println("Se elimino correctamente la categoria: "+nombre);
+			System.out.println("Se elimino correctamente la Categoria: " + nombre);
 		} catch (Db4oException e) {
 			System.out.println("No se pudo eliminar la Categoria, Error: " + e.getMessage());
 		}
 
 	}
 
-	
 }

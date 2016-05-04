@@ -9,19 +9,16 @@ import com.db4o.query.Predicate;
 
 import modelo.Canje;
 
+public class CanjeDaoImpl extends GenericDaoImpl<Canje, Serializable> implements CanjeDao {
 
+	public List<Canje> ListarCanjesConFecha(ObjectContainer db, final String fecha) {
 
-
-public class CanjeDaoImpl  extends GenericDaoImpl<Canje, Serializable> implements CanjeDao {
-	
-	
-
-	public List<Canje> ListarCanjesConDescripcion(ObjectContainer db, final String desc) {
-	List <Canje> pilots = db.query(new Predicate<Canje>() {
-		public boolean match(Canje canje) {
-		return canje.getDescripcion().equals(desc);
-		}
+		List<Canje> canjes = db.query(new Predicate<Canje>() {
+			public boolean match(Canje canje) {
+				return canje.getFecha().equals(fecha);
+			}
 		});
-return pilots;
-}
+		return canjes;
+
 	}
+}

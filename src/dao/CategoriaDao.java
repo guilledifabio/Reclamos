@@ -1,17 +1,10 @@
 package dao;
 
-import java.util.List;
-
 import com.db4o.ObjectContainer;
 
-import modelo.Categoria;
-
-
 public interface CategoriaDao {
-	// public abstract void borrar(Categoria cat);
 
-		
-		public abstract List<Categoria> buscarTodos(ObjectContainer db);
+	public void modificar(ObjectContainer db, final String nombreactual, String nombrenuevo, String desc, int puntos);
 
-		public abstract void insertar(ObjectContainer db,Categoria objeto);
+	public void eliminarPorNombre(ObjectContainer db, final String nombre);
 }

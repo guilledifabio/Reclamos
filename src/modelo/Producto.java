@@ -5,28 +5,19 @@ import com.db4o.activation.Activator;
 import com.db4o.ta.Activatable;
 
 public class Producto implements Activatable {
-	int id;
+	
 	String nombre;
 	int puntosrequeridos;
 	private transient Activator _activator;
 
-	public Producto(int id, String nombre, int puntosrequeridos) {
+	public Producto(String nombre, int puntosrequeridos) {
 		super();
-		this.id = id;
+		
 		this.nombre = nombre;
 		this.puntosrequeridos = puntosrequeridos;
 	}
 
-	public int getId() {
-		activate(ActivationPurpose.READ);
-		return id;
-	}
-
-	public void setId(int id) {
-		activate(ActivationPurpose.WRITE);
-		this.id = id;
-	}
-
+	
 	public String getNombre() {
 		activate(ActivationPurpose.READ);
 		return nombre;
@@ -61,6 +52,12 @@ public class Producto implements Activatable {
 			throw new IllegalStateException();
 		}
 		_activator = activator;
+	}
+
+
+	@Override
+	public String toString() {
+		return " Producto [nombre=" + nombre + ", puntosrequeridos=" + puntosrequeridos + "]";
 	}
 
 }

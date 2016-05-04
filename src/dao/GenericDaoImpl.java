@@ -12,75 +12,57 @@ import com.db4o.ext.Db4oException;
 import com.db4o.query.Predicate;
 import com.db4o.query.Query;
 
-
-
-
-
-public abstract class GenericDaoImpl<T, Id extends Serializable> implements
-		GenericDao<T, Id> {
+public abstract class GenericDaoImpl<T, Id extends Serializable> implements GenericDao<T, Id> {
 
 	private Class<T> claseDePersistencia;
 
 	@SuppressWarnings("unchecked")
 	public GenericDaoImpl() {
-		this.claseDePersistencia = (Class<T>) ((ParameterizedType) getClass()
-				.getGenericSuperclass()).getActualTypeArguments()[0];
+		this.claseDePersistencia = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass())
+				.getActualTypeArguments()[0];
 	}
 
-	
-	/*public T buscarPorClave(Id id) {
-
-		ObjectContainer bd= Helper.ConnectionDB("reclamos");		
-		T objeto = null;
-		try {
-			
-			return objeto;
-		} finally {
-			
-		}
-		
-	}
-*/
+	/*
+	 * public T buscarPorClave(Id id) {
+	 * 
+	 * ObjectContainer bd= Helper.ConnectionDB("reclamos"); T objeto = null; try
+	 * {
+	 * 
+	 * return objeto; } finally {
+	 * 
+	 * }
+	 * 
+	 * }
+	 */
 
 	public ObjectSet<T> buscarTodos(ObjectContainer db) {
-		
+
 		Query q = db.query();
 		q.constrain(claseDePersistencia);
 		ObjectSet result = q.execute();
-			
+
 		return result;
-		
+
 	}
 
-	
-/*
-	public void borrar(T objeto) {
-		EntityManagerFactory factoriaSession = JPAHelper.getJPAFactory();
-		EntityManager manager = factoriaSession.createEntityManager();
-		EntityTransaction tx = null;
+	public void eliminar(ObjectContainer db, T objeto) {
 		try {
-			tx = manager.getTransaction();
-			tx.begin();
-			manager.remove(manager.merge(objeto));
-
-			tx.commit();
-		} catch (PersistenceException e) {
-			tx.rollback();
-			throw e;
-		} finally {
-			manager.close();
+			db.delete(objeto);
+			System.out.println("Eliminado " + objeto.getClass().getName());
+		} catch (Db4oException e) {
+			System.out.println("Error al eliminar : " + e.getMessage());
 		}
-	}*/
 
-	
-	public void insertar(ObjectContainer db,T objeto) {
-		
+	}
+
+	public void insertar(ObjectContainer db, T objeto) {
+
 		try {
-		db.store(objeto);
-		System.out.println("Guardado " + objeto);
-		} catch (Db4oException  e) {
+			db.store(objeto);
+			System.out.println("Guardado " + objeto.getClass().getName());
+		} catch (Db4oException e) {
 			System.out.println("Error al guardar : " + e.getMessage());
-		} 
+		}
 
 	}
 }

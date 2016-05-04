@@ -1,6 +1,8 @@
 package controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -37,16 +39,15 @@ public class Test {
 		// CREATE
 
 		try {
-			CatalogoDaoImpl catdao = new CatalogoDaoImpl();
-			Catalogo catalogo = new Catalogo("catalogo nuevo");
-			catdao.insertar(db,catalogo);
 
-			// ----------------------------- CRUD Categorias------------------------------------
+			// ----------------------------- CRUD
+			// Categorias------------------------------------
 
 			Categoria cate = new Categoria("Calles y Veredas", "Solicitá el arreglo de veredas en mal estado o baches",
 					10);
 			Categoria cate2 = new Categoria("Arbolado", "Solicitá la poda de ramas y despejes", 9);
 			Categoria cate3 = new Categoria("Alumbrado", "Solicitá el arreglo o la falta de luces", 5);
+			Categoria cate4 = new Categoria("Red de agua potable", "Solicitá el arreglo de cañerias dañadas", 15);
 			/*
 			 * db.store(cate); db.store(cate2); db.store(cate3);
 			 */
@@ -56,39 +57,74 @@ public class Test {
 			categoriadao.insertar(db, cate3);
 			categoriadao.modificar(db, "Alumbrado", "Alumbrado Modificado", "Solicitá el arreglo o la falta de luces",
 					7);
-			categoriadao.eliminar(db, "Arbolado");
+			categoriadao.eliminarPorNombre(db, "Arbolado");
+
+			// CRUD CATALOGO
+
+			CatalogoDaoImpl catdao = new CatalogoDaoImpl();
+			Catalogo catalogo = new Catalogo("catalogo nuevo");
 
 			// CRUD Producto
-			Producto prod = new Producto(8, "Notebook", 30);
+			Producto prod = new Producto("Notebook", 30);
+			List<Producto> productos = new ArrayList<Producto>();
+			productos.add(prod);
+			catalogo.setProductos(productos);
+			catdao.insertar(db, catalogo);
+			System.out.println(catalogo.toString());
 			ProductoDaoImpl prodao = new ProductoDaoImpl();
 			// prodao.salvar(prod);
-
+			
 			CanjeDaoImpl candao = new CanjeDaoImpl();
-			// Crear el Canje de un Producto
+			// Crear el Canje de un Producto - Agregar al ciudadano
 
-			Canje can = new Canje("mal estacionado", "27/09/2015");
+			Canje can = new Canje("27/09/2015");
+			Canje can1 = new Canje("28/09/2015");
 			can.setProducto(prod);
-
+			//prodao.eliminar(db, prod);
 			// db.store(can);
 			candao.insertar(db, can);
-			String desc = "mal estacionado";
-			List<Canje> canjes = candao.ListarCanjesConDescripcion(db, desc);
+			/*
+			 * String desc = "mal estacionado"; List<Canje> canjes =
+			 * candao.ListarCanjesConDescripcion(db, desc);
+			 * 
+			 * System.out.println("Canjes con descripcion : " + desc);
+			 * 
+			 * Iterator<Canje> Iteratorr = canjes.iterator(); while
+			 * (Iteratorr.hasNext()) { Canje canje = Iteratorr.next();
+			 * System.out.print("Canje : " + canje.getDescripcion() + " - ");
+			 * System.out.println(canje.getFecha() + "  "); }
+			 */
 
-			System.out.println("Canjes con descripcion : " + desc);
-
-			Iterator<Canje> Iteratorr = canjes.iterator();
-			while (Iteratorr.hasNext()) {
-				Canje canje = Iteratorr.next();
-				System.out.print("Canje : " + canje.getDescripcion() + " - ");
-				System.out.println(canje.getFecha() + "  ");
-			}
-
-			// CIUDADANO
-			Ciudadano ciu = new Ciudadano("Guillermo", "Difabio", 36849832, "guillermodifabio@gmail.com", 3);
-			Ciudadano ciu2 = new Ciudadano("Roberto", "Perez", 38567432, "robertoperez@gmail.com", 10);
-			db.store(ciu);
-			db.store(ciu2);
+			// ----------------------------- CRUD
+			// CIUDADANO------------------------------------
 			CiudadanoDaoImpl ciudao = new CiudadanoDaoImpl();
+			Ciudadano ciu = new Ciudadano("Guillermo", "Difabio", 36849832, "guillermodifabio@gmail.com", 30);
+			Ciudadano ciu2 = new Ciudadano("Roberto", "Perez", 38567432, "robertoperez@gmail.com", 10);
+			ciu.CanjearPuntos(prod);
+			// ACA
+			Reclamo reclamo2 = new Reclamo("02/05/2015", "Falta de Agua ", "Barrio Guido");
+
+			reclamo2.setCategoria(cate4);
+			ciu.realizarReclamo(reclamo2); //REALIZAR UN RECLAMO
+			ciudao.insertar(db, ciu);
+			ciudao.insertar(db, ciu2);
+			List<Ciudadano> ciudadanos = ciudao.buscarTodos(db);
+
+			Iterator<Ciudadano> Iteratorciu = ciudadanos.iterator();
+			while (Iteratorciu.hasNext()) {
+				Ciudadano ciud = Iteratorciu.next();
+				System.out.println("Ciudadano : " + ciud.getNombre() + " " + ciud.getApellido() + " - ");
+				List<Canje> ciucanjes = ciud.getCanjes();
+				Iterator<Canje> Iteratorciucanjes = ciucanjes.iterator();
+				while (Iteratorciucanjes.hasNext()) {
+					Canje ca = Iteratorciucanjes.next();
+					System.out.println(ca.toString());
+					/*
+					 * System.out.print("Canje : " + ca.getFecha() + " - ");
+					 * System.out.println(ca.getProducto().getNombre());
+					 */
+				}
+			}
 
 			// RECLAMO
 			List<Evento> eventos = new ArrayList<Evento>();
@@ -122,7 +158,23 @@ public class Test {
 			// 1. Categorias
 
 			// 2. Listar Ciudadanos ... Hay que cargar canjes
-			ciudao.ListarCiudadanos(db);
+			
+				List<Ciudadano> ciudadanoss =ciudao.buscarTodos(db);
+
+				for (Ciudadano c : ciudadanoss) // Esto es un for extendido o for-each
+				{
+					System.out.println("Ciudadano " + c.getNombre() + " "
+							+ c.getApellido());
+					List<Canje> canjes = c.getCanjes();
+					for (Canje ca : canjes) {
+						System.out.println("Canje " + ca.getFecha()
+								+ ca.getProducto().getNombre());
+					}
+				}
+
+			
+			
+			
 
 			// 7. LISTAR RECLAMOS CON SUS EVENTOS
 			List<Reclamo> reclamos = recdao.buscarTodos(db);
