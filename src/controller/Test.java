@@ -67,20 +67,21 @@ public class Test {
 			// CRUD Producto
 			Producto prod = new Producto("Notebook", 30);
 			List<Producto> productos = new ArrayList<Producto>();
-			productos.add(prod);
+			//productos.add(prod);
 			catalogo.setProductos(productos);
+			catalogo.agregarProducto(new Producto("Nuevo producto", 30));
 			catdao.insertar(db, catalogo);
 			System.out.println(catalogo.toString());
 			ProductoDaoImpl prodao = new ProductoDaoImpl();
 			// prodao.salvar(prod);
-			
+
 			CanjeDaoImpl candao = new CanjeDaoImpl();
 			// Crear el Canje de un Producto - Agregar al ciudadano
 
 			Canje can = new Canje("27/09/2015");
 			Canje can1 = new Canje("28/09/2015");
 			can.setProducto(prod);
-			//prodao.eliminar(db, prod);
+			// prodao.eliminar(db, prod);
 			// db.store(can);
 			candao.insertar(db, can);
 			/*
@@ -105,7 +106,7 @@ public class Test {
 			Reclamo reclamo2 = new Reclamo("02/05/2015", "Falta de Agua ", "Barrio Guido");
 
 			reclamo2.setCategoria(cate4);
-			ciu.realizarReclamo(reclamo2); //REALIZAR UN RECLAMO
+			ciu.realizarReclamo(reclamo2); // REALIZAR UN RECLAMO
 			ciudao.insertar(db, ciu);
 			ciudao.insertar(db, ciu2);
 			List<Ciudadano> ciudadanos = ciudao.buscarTodos(db);
@@ -147,6 +148,7 @@ public class Test {
 			eventos2.add(event5);
 			eventos2.add(event6);
 			rec2.setEventos(eventos2);
+
 			db.store(rec);
 			db.store(rec2);
 			ReclamoDaoImpl recdao = new ReclamoDaoImpl();
@@ -158,23 +160,18 @@ public class Test {
 			// 1. Categorias
 
 			// 2. Listar Ciudadanos ... Hay que cargar canjes
-			
-				List<Ciudadano> ciudadanoss =ciudao.buscarTodos(db);
 
-				for (Ciudadano c : ciudadanoss) // Esto es un for extendido o for-each
-				{
-					System.out.println("Ciudadano " + c.getNombre() + " "
-							+ c.getApellido());
-					List<Canje> canjes = c.getCanjes();
-					for (Canje ca : canjes) {
-						System.out.println("Canje " + ca.getFecha()
-								+ ca.getProducto().getNombre());
-					}
+			List<Ciudadano> ciudadanoss = ciudao.buscarTodos(db);
+
+			for (Ciudadano c : ciudadanoss) // Esto es un for extendido o
+											// for-each
+			{
+				System.out.println("Ciudadano " + c.getNombre() + " " + c.getApellido());
+				List<Canje> canjes = c.getCanjes();
+				for (Canje ca : canjes) {
+					System.out.println("Canje " + ca.getFecha() + ca.getProducto().getNombre());
 				}
-
-			
-			
-			
+			}
 
 			// 7. LISTAR RECLAMOS CON SUS EVENTOS
 			List<Reclamo> reclamos = recdao.buscarTodos(db);
