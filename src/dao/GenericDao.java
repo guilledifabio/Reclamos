@@ -11,8 +11,8 @@ public interface GenericDao<T, Id extends Serializable> {
 
 	List<T> buscarTodos(ObjectContainer db);
 
-	 void insertar(ObjectContainer db,T objeto);
+	 void salvar(ObjectContainer db,T objeto);
 	//void modificar(ObjectContainer db,T objeto);
-	 void eliminar(ObjectContainer db,T objeto);
+	 void borrar(ObjectContainer db,T objeto);
 	
 }

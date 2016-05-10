@@ -2,6 +2,10 @@ package modelo;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -21,13 +25,13 @@ public class Ciudadano implements Activatable {
 	List<Reclamo> reclamos;
 	private transient Activator _activator;
 
-	public Ciudadano(String nombre, String apellido, int dni, String email, int puntos) {
+	public Ciudadano(String nombre, String apellido, int dni, String email) {
 		super();
 		this.nombre = nombre;
 		this.apellido = apellido;
 		this.dni = dni;
 		this.email = email;
-		this.puntos = puntos;
+		this.puntos = 0;
 		this.canjes = new ArrayList();
 		this.reclamos = new ArrayList();
 	}
@@ -106,42 +110,35 @@ public class Ciudadano implements Activatable {
 		Integer pts = null;
 		Calendar cal = null;
 
-		try {
+		LocalDateTime primaveraini = LocalDateTime.parse("2016-08-21T10:11:30");
+		LocalDateTime primaverafin = LocalDateTime.parse("2016-12-21T10:11:30");
+		LocalDateTime dia = LocalDateTime.parse("2016-08-27T10:11:30");
+		// LocalDateTime diaa = reclamo.getFecha();
+		cal = Calendar.getInstance();
 
-			SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
-			Date primavera1 = formateador.parse("21/08/2016");
-			Date primavera2 = formateador.parse("21/12/2016");
-			Date diaa = formateador.parse("27/08/2016");
-			// dia=hoy;
-			cal = Calendar.getInstance();
-			cal.setTime(diaa);
-			int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+		DayOfWeek dayOfWeek = dia.getDayOfWeek();
 
-			if (diaa.before(primavera2) && diaa.after(primavera1)
-					&& (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY)) { // Finde
-				// en
-				// Periodo
-				// de
-				// Primavera
-				System.out.println("Entro en primavera");
-				System.out.println("ES FINDEEE");
-				pts = reclamo.getCategoria().getPuntos() * 2;// Duplico
-																// los
-																// puntos
+		if (dia.isBefore(primaverafin) && dia.isAfter(primaveraini)
+				&& (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY)) { // Finde
+			// en
+			// Periodo
+			// de
+			// Primavera
+			System.out.println("Entro en primavera");
+			System.out.println("ES FINDEEE");
+			pts = reclamo.getCategoria().getPuntos() * 2;// Duplico
+															// los
+															// puntos
 
-			} else {
+		} else {
 
-				pts = reclamo.getCategoria().getPuntos();
-			}
-			this.setPuntos(this.getPuntos() + pts);
-			this.reclamos.add(reclamo);
-
-			System.out
-					.println("Se realizo el Reclamo " + reclamo.descripcion + " correctamente por: " + pts + " puntos");
-
-		} catch (ParseException e) {
-			System.out.println("Se Produjo un Error!!!  " + e.getMessage());
+			pts = reclamo.getCategoria().getPuntos();
 		}
+		this.setPuntos(this.getPuntos() + pts);
+
+		this.reclamos.add(reclamo);
+
+		System.out.println("Se realizo el Reclamo " + reclamo.descripcion + " correctamente por: " + pts + " puntos");
 
 	}// Obtengo
 		// la
@@ -155,7 +152,7 @@ public class Ciudadano implements Activatable {
 		// del
 		// Ciudadano
 
-	public void CanjearPuntos(Producto pro) {
+	public void canjearPuntos(Producto pro) {
 		Integer pts = null;
 		Calendar cal = null;
 		// Date hoy=new Date();

@@ -15,7 +15,7 @@ public class Catalogo implements Activatable {
 	public Catalogo(String nombre) {
 		super();
 		this.nombre = nombre;
-		this.productos = new ArrayList();
+		this.productos = null;
 	}
 
 	public String getNombre() {
@@ -41,9 +41,13 @@ public class Catalogo implements Activatable {
 	public void agregarProducto(Producto prod) {
 		List listaproducto = this.getProductos();
 		listaproducto.add(prod);
-		this.productos = listaproducto;
+		this.setProductos(listaproducto);
 	}
-
+	public void eliminarProducto(Producto prod) {
+		List listaproducto = this.getProductos();
+		listaproducto.remove(prod);
+		this.setProductos(listaproducto);
+	}
 	public void activate(ActivationPurpose purpose) {
 		if (_activator != null) {
 			_activator.activate(purpose);

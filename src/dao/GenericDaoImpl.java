@@ -45,7 +45,7 @@ public abstract class GenericDaoImpl<T, Id extends Serializable> implements Gene
 
 	}
 
-	public void eliminar(ObjectContainer db, T objeto) {
+	public void borrar(ObjectContainer db, T objeto) {
 		try {
 			db.delete(objeto);
 			System.out.println("Eliminado " + objeto.getClass().getName());
@@ -55,7 +55,7 @@ public abstract class GenericDaoImpl<T, Id extends Serializable> implements Gene
 
 	}
 
-	public void insertar(ObjectContainer db, T objeto) {
+	public void salvar(ObjectContainer db, T objeto) {
 
 		try {
 			db.store(objeto);
