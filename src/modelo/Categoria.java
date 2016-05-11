@@ -1,17 +1,32 @@
 package modelo;
 
+import java.util.UUID;
+
 import com.db4o.activation.ActivationPurpose;
 import com.db4o.activation.Activator;
 import com.db4o.ta.Activatable;
 
+import dto.CategoriaDTO;
+
 public class Categoria implements Activatable {
-	String nombre;
-	String descripcion;
-	int puntos;
+	
+	private String id = null;
+	private String nombre;
+	private String descripcion;
+	private int puntos;
 	private transient Activator _activator;
 
 	public Categoria(String nombre, String descripcion, int puntos) {
 		super();
+		this.id = UUID.randomUUID().toString();
+		this.nombre = nombre;
+		this.descripcion = descripcion;
+		this.puntos = puntos;
+	}
+
+	public Categoria(String id, String nombre, String descripcion, int puntos) {
+		super();
+		this.id = id;
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 		this.puntos = puntos;
@@ -67,5 +82,14 @@ public class Categoria implements Activatable {
 	public String toString() {
 		return this.getNombre();
 	}
-
+	
+	public CategoriaDTO toDTO() {
+		CategoriaDTO categoriaDto = new CategoriaDTO();
+		categoriaDto.setId(this.id);
+		categoriaDto.setNombre(this.nombre);
+		categoriaDto.setDescripcion(this.descripcion);
+		categoriaDto.setPuntos(this.puntos);
+		
+		return categoriaDto;
+	}
 }

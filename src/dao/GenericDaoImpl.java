@@ -22,18 +22,7 @@ public abstract class GenericDaoImpl<T, Id extends Serializable> implements Gene
 				.getActualTypeArguments()[0];
 	}
 
-	/*
-	 * public T buscarPorClave(Id id) {
-	 * 
-	 * ObjectContainer bd= Helper.ConnectionDB("reclamos"); T objeto = null; try
-	 * {
-	 * 
-	 * return objeto; } finally {
-	 * 
-	 * }
-	 * 
-	 * }
-	 */
+	
 
 	public ObjectSet<T> buscarTodos(ObjectContainer db) {
 

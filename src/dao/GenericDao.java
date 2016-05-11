@@ -7,7 +7,7 @@ import com.db4o.ObjectContainer;
 
 public interface GenericDao<T, Id extends Serializable> {
 	
-	//T buscarPorClave(Id id);
+	//T buscarPorId(Id id);
 
 	List<T> buscarTodos(ObjectContainer db);
 

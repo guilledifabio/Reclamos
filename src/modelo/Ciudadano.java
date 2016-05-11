@@ -10,23 +10,32 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import com.db4o.activation.ActivationPurpose;
 import com.db4o.activation.Activator;
 import com.db4o.ta.Activatable;
 
+import api.Reclamos;
+import dto.CanjeDTO;
+import dto.CiudadanoDTO;
+import dto.ReclamoDTO;
+
 public class Ciudadano implements Activatable {
-	String nombre;
-	String apellido;
-	int dni;
-	String email;
-	int puntos;
-	List<Canje> canjes;
-	List<Reclamo> reclamos;
+
+	private String id = null;
+	private String nombre;
+	private String apellido;
+	private int dni;
+	private String email;
+	private int puntos;
+	private List<Canje> canjes;
+	private List<Reclamo> reclamos;
 	private transient Activator _activator;
 
 	public Ciudadano(String nombre, String apellido, int dni, String email) {
 		super();
+		this.id = UUID.randomUUID().toString();
 		this.nombre = nombre;
 		this.apellido = apellido;
 		this.dni = dni;
@@ -34,6 +43,48 @@ public class Ciudadano implements Activatable {
 		this.puntos = 0;
 		this.canjes = new ArrayList();
 		this.reclamos = new ArrayList();
+	}
+
+	public Ciudadano(String id, String nombre, String apellido, int dni, String email) {
+		super();
+		this.id = id;
+		this.nombre = nombre;
+		this.apellido = apellido;
+		this.dni = dni;
+		this.email = email;
+		this.puntos = 0;
+		this.canjes = new ArrayList();
+		this.reclamos = new ArrayList();
+	}
+
+	public Ciudadano(CiudadanoDTO ciudadanoDto) {
+		this.id = UUID.randomUUID().toString();
+		this.nombre = ciudadanoDto.getNombre();
+		this.apellido = ciudadanoDto.getApellido();
+		this.dni = ciudadanoDto.getDni();
+		this.email = ciudadanoDto.getEmail();
+		this.puntos = ciudadanoDto.getPuntos();
+		this.canjes = new ArrayList();
+		this.reclamos = new ArrayList();
+	}
+
+	public List<CanjeDTO> listCanjesDTO() {
+		List<CanjeDTO> lcanjes = new ArrayList<CanjeDTO>();
+		for (Canje canjes : canjes) {
+			lcanjes.add(canjes.toDTO());
+		}
+
+		return lcanjes;
+	}
+
+	public String getId() {
+		activate(ActivationPurpose.READ);
+		return id;
+	}
+
+	public void setId(String id) {
+		activate(ActivationPurpose.WRITE);
+		this.id = id;
 	}
 
 	public String getNombre() {
@@ -108,13 +159,11 @@ public class Ciudadano implements Activatable {
 
 	public void realizarReclamo(Reclamo reclamo) {
 		Integer pts = null;
-		Calendar cal = null;
-
+		
 		LocalDateTime primaveraini = LocalDateTime.parse("2016-08-21T10:11:30");
 		LocalDateTime primaverafin = LocalDateTime.parse("2016-12-21T10:11:30");
 		LocalDateTime dia = LocalDateTime.parse("2016-08-27T10:11:30");
 		// LocalDateTime diaa = reclamo.getFecha();
-		cal = Calendar.getInstance();
 
 		DayOfWeek dayOfWeek = dia.getDayOfWeek();
 
@@ -138,7 +187,8 @@ public class Ciudadano implements Activatable {
 
 		this.reclamos.add(reclamo);
 
-		System.out.println("Se realizo el Reclamo " + reclamo.descripcion + " correctamente por: " + pts + " puntos");
+		System.out.println(
+				"Se realizo el Reclamo " + reclamo.getDescripcion() + " correctamente por: " + pts + " puntos");
 
 	}// Obtengo
 		// la
@@ -154,46 +204,46 @@ public class Ciudadano implements Activatable {
 
 	public void canjearPuntos(Producto pro) {
 		Integer pts = null;
+		Integer pt = null;
 		Calendar cal = null;
-		// Date hoy=new Date();
-		try {
-			if (this.getPuntos() < pro.getPuntosrequeridos()) {
+		if (this.getPuntos() < pro.getPuntosrequeridos()) {
 
-				System.out.println("No tiene los Puntos requeridos para realizar el canje ");
+			System.out.println("El Ciudadano "+this.getNombre()+" "+this.getApellido()+", no tiene los Puntos requeridos para realizar el canje ");
 
-			} else {
-				SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
-				Date primavera1 = formateador.parse("21/08/2016");
-				Date primavera2 = formateador.parse("21/12/2016");
-				Date dia = formateador.parse("22/08/2016");
-				// dia=hoy;
-				cal = Calendar.getInstance();
-				cal.setTime(dia);
-				int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-				if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
+		} else {
+			LocalDateTime primaveraini = LocalDateTime.parse("2016-08-21T10:11:30");
+			LocalDateTime primaverafin = LocalDateTime.parse("2016-12-21T10:11:30");
+			LocalDateTime dia = LocalDateTime.parse("2016-08-22T10:11:30");
+			// LocalDateTime diaa = reclamo.getFecha();
 
-					System.out.println("ES FINDEEE");
+			DayOfWeek dayOfWeek = dia.getDayOfWeek();
 
-				}
-				if (dia.before(primavera2) && dia.after(primavera1) && this.puntos > 10) { // Periodo
-																							// de
-																							// Primavera
-					System.out.println("Entro en primavera");
-					pts = this.getPuntos() - (pro.getPuntosrequeridos() / 2);
+			// dia=hoy;
 
-				} else {
+			if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
 
-					pts = this.getPuntos() - (pro.getPuntosrequeridos());
-				}
-				this.setPuntos(pts);
-				Canje can = new Canje("22/08/2016");
-				can.setProducto(pro);
-				this.canjes.add(can);
-				System.out.println("Se realizo el canje correctamente por: " + pts + " puntos");
+				System.out.println("ES FINDEEE");
 
 			}
-		} catch (ParseException e) {
-			System.out.println("Se Produjo un Error!!!  " + e.getMessage());
+			if (dia.isBefore(primaverafin) && dia.isAfter(primaveraini) && this.puntos > 10) { // Periodo
+																								// de
+																								// Primavera
+				System.out.println("Entro en primavera");
+				pt=pro.getPuntosrequeridos() / 2;
+				pts = this.getPuntos() - (pt);
+
+			} else {
+				pt=pro.getPuntosrequeridos();
+				pts = this.getPuntos() - (pt);
+			}
+			this.setPuntos(pts);
+			Canje can = new Canje();
+			can.setProducto(pro);
+			
+			this.canjes.add(can);
+			
+			System.out.println("El Ciudadano "+this.getNombre()+" "+this.getApellido()+", realizo el canje correctamente por: " + pt + " puntos");
+
 		}
 	}
 
@@ -211,5 +261,30 @@ public class Ciudadano implements Activatable {
 			throw new IllegalStateException();
 		}
 		_activator = activator;
+	}
+
+	public CiudadanoDTO toDTO() {
+		CiudadanoDTO ciudadanoDto = new CiudadanoDTO();
+		ciudadanoDto.setId(this.id);
+		ciudadanoDto.setNombre(this.nombre);
+		ciudadanoDto.setApellido(this.apellido);
+		ciudadanoDto.setDni(this.dni);
+		ciudadanoDto.setEmail(this.email);
+		ciudadanoDto.setPuntos(this.puntos);
+		List<CanjeDTO> canjesDto = new ArrayList<CanjeDTO>();
+		if (!this.canjes.isEmpty()) {
+			for (Canje canje : canjes) {
+				canjesDto.add(canje.toDTO());
+			}
+		}
+		ciudadanoDto.setCanjes(canjesDto);
+		List<ReclamoDTO> reclamosDto = new ArrayList<ReclamoDTO>();
+		if (!reclamos.isEmpty()) {
+			for (Reclamo reclamo : reclamos) {
+				reclamosDto.add(reclamo.toDTO());
+			}
+		}
+		ciudadanoDto.setProductos(reclamosDto);
+		return ciudadanoDto;
 	}
 }

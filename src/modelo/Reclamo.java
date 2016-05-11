@@ -3,35 +3,51 @@ package modelo;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-import com.db4o.ObjectContainer;
 import com.db4o.activation.ActivationPurpose;
 import com.db4o.activation.Activator;
 import com.db4o.ta.Activatable;
 
+import dto.EventoDTO;
+import dto.ReclamoDTO;
+
 public class Reclamo implements Activatable {
-	LocalDateTime fecha;
-	String descripcion;
-	String direccion;
-	Categoria categoria;
-	List eventos;
+	
+	private String id = null;
+	private LocalDateTime fecha;
+	private String descripcion;
+	private String direccion;
+	private Categoria categoria;
+	private List<Evento> eventos;
 	private transient Activator _activator;
 
 	public Reclamo(String descripcion, String direccion, Categoria categoria) {
 		super();
+		this.id = UUID.randomUUID().toString();
 		this.fecha = LocalDateTime.now();
 		this.descripcion = descripcion;
 		this.direccion = direccion;
 		this.categoria = categoria;
-		this.eventos = new ArrayList();
+		this.eventos = new ArrayList<Evento>();
 	}
 
-	public List getEventos() {
+	public Reclamo(String id, String descripcion, String direccion, Categoria categoria) {
+		super();
+		this.id = id;
+		this.fecha = LocalDateTime.now();
+		this.descripcion = descripcion;
+		this.direccion = direccion;
+		this.categoria = categoria;
+		this.eventos = new ArrayList<Evento>();
+	}
+
+	public List<Evento> getEventos() {
 		activate(ActivationPurpose.READ);
 		return eventos;
 	}
 
-	public void setEventos(List eventos) {
+	public void setEventos(List<Evento> eventos) {
 		activate(ActivationPurpose.WRITE);
 		this.eventos = eventos;
 	}
@@ -97,6 +113,20 @@ public class Reclamo implements Activatable {
 
 		ciu.setPuntos(puntos + this.categoria.getPuntos());
 
+	}
+	
+	public ReclamoDTO toDTO() {
+		ReclamoDTO reclamoDto = new ReclamoDTO();
+		reclamoDto.setId(this.id);
+		reclamoDto.setFecha(this.fecha);
+		reclamoDto.setDireccion(this.direccion);
+		reclamoDto.setCategoria(this.categoria.toDTO());
+		List<EventoDTO> levento = new ArrayList<EventoDTO>();
+		for (Evento evento : eventos) {
+			levento.add(evento.toDTO());
+		}
+		
+		return reclamoDto;
 	}
 
 }

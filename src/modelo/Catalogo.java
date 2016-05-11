@@ -2,20 +2,40 @@ package modelo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.db4o.activation.ActivationPurpose;
 import com.db4o.activation.Activator;
 import com.db4o.ta.Activatable;
 
+import dto.CatalogoDTO;
+import dto.ProductoDTO;
+
 public class Catalogo implements Activatable {
-	String nombre;
-	List productos;
+
+	private String id = null;
+	private String nombre;
+	private List<Producto> productos;
 	private transient Activator _activator;
 
 	public Catalogo(String nombre) {
 		super();
+		this.id = UUID.randomUUID().toString();
 		this.nombre = nombre;
-		this.productos = null;
+		this.productos = new ArrayList<Producto>();
+	}
+
+	public Catalogo(String id, String nombre) {
+		super();
+		this.id = id;
+		this.nombre = nombre;
+		this.productos = new ArrayList<Producto>();
+	}
+
+	public Catalogo(CatalogoDTO catalogoDto) {
+		this.id = UUID.randomUUID().toString();
+		this.nombre = catalogoDto.getNombre();
+		this.productos = new ArrayList();
 	}
 
 	public String getNombre() {
@@ -28,26 +48,45 @@ public class Catalogo implements Activatable {
 		this.nombre = nombre;
 	}
 
-	public List getProductos() {
+	public List<Producto> getProductos() {
 		activate(ActivationPurpose.READ);
 		return productos;
 	}
 
-	public void setProductos(List productos) {
+	public void setProductos(List<Producto> productos) {
 		activate(ActivationPurpose.WRITE);
 		this.productos = productos;
 	}
 
+	public String getId() {
+		activate(ActivationPurpose.READ);
+		return id;
+	}
+
+	public void setId(String id) {
+		activate(ActivationPurpose.WRITE);
+		this.id = id;
+	}
+
 	public void agregarProducto(Producto prod) {
-		List listaproducto = this.getProductos();
+		List<Producto> listaproducto = this.getProductos();
 		listaproducto.add(prod);
 		this.setProductos(listaproducto);
 	}
+
+	public void agregarProducto(ProductoDTO prodDto) {
+		List<Producto> listaproducto = this.getProductos();
+		Producto prod = new Producto(prodDto);
+		listaproducto.add(prod);
+		this.setProductos(listaproducto);
+	}
+
 	public void eliminarProducto(Producto prod) {
-		List listaproducto = this.getProductos();
+		List<Producto> listaproducto = this.getProductos();
 		listaproducto.remove(prod);
 		this.setProductos(listaproducto);
 	}
+
 	public void activate(ActivationPurpose purpose) {
 		if (_activator != null) {
 			_activator.activate(purpose);
@@ -69,4 +108,20 @@ public class Catalogo implements Activatable {
 		return "Catalogo [nombre=" + nombre + ", productos=" + productos + "]";
 	}
 
+	public CatalogoDTO toDTO() {
+		CatalogoDTO catalogoDto = new CatalogoDTO();
+		catalogoDto.setId(this.id);
+		catalogoDto.setNombre(this.nombre);
+		List<Producto> lproductos = new ArrayList<Producto>();
+
+		if (!productos.isEmpty()) {
+			for (Producto producto : productos) {
+				lproductos.add(producto);
+			}
+		}
+
+		catalogoDto.setProductos(lproductos);
+
+		return catalogoDto;
+	}
 }

@@ -1,39 +1,50 @@
 package modelo;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+
+import java.util.UUID;
 
 import com.db4o.activation.ActivationPurpose;
 import com.db4o.activation.Activator;
 import com.db4o.ta.Activatable;
 
+import dto.CanjeDTO;
+
 public class Canje implements Activatable {
-	Date fecha;
-	Producto producto;
+
+	private String id = null;
+	private LocalDateTime fecha;
+	private Producto producto;
 	private transient Activator _activator;
 
-	public Canje(String fecha) {
+	public Canje(LocalDateTime dia) {
 		super();
-		try {
-			SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
-			Date dia = formateador.parse(fecha);
 
-			this.fecha = dia;
-			this.producto = null;
-		} catch (ParseException e) {
-			System.out.println("Se Produjo un Error!!!  " + e.getMessage());
-		}
+		this.id = UUID.randomUUID().toString();
+		this.fecha = dia;
+		this.producto = null;
 	}
 
-	
+	public Canje() {
+		super();
+		LocalDateTime dia = LocalDateTime.now();
+		this.id = UUID.randomUUID().toString();
+		this.fecha = dia;
+		this.producto = null;
+	}
 
-	public Date getFecha() {
+	public Canje(CanjeDTO canjeDto) {
+		this.id = UUID.randomUUID().toString();
+		this.fecha = canjeDto.getFecha();
+		this.producto = canjeDto.getProducto();
+	}
+
+	public LocalDateTime getFecha() {
 		activate(ActivationPurpose.READ);
 		return fecha;
 	}
 
-	public void setFecha(Date fecha) {
+	public void setFecha(LocalDateTime fecha) {
 		activate(ActivationPurpose.WRITE);
 		this.fecha = fecha;
 	}
@@ -46,6 +57,16 @@ public class Canje implements Activatable {
 	public void setProducto(Producto producto) {
 		activate(ActivationPurpose.WRITE);
 		this.producto = producto;
+	}
+
+	public String getId() {
+		activate(ActivationPurpose.READ);
+		return id;
+	}
+
+	public void setId(String id) {
+		activate(ActivationPurpose.WRITE);
+		this.id = id;
 	}
 
 	public void activate(ActivationPurpose purpose) {
@@ -63,9 +84,19 @@ public class Canje implements Activatable {
 		}
 		_activator = activator;
 	}
+
 	@Override
 	public String toString() {
 		return "Canje [fecha= " + fecha + "," + producto + "]";
+	}
+
+	public CanjeDTO toDTO() {
+		CanjeDTO canjeDto = new CanjeDTO();
+		canjeDto.setId(this.id);
+		canjeDto.setFecha(this.fecha);
+		canjeDto.setProducto(this.producto);
+
+		return canjeDto;
 	}
 
 }
