@@ -10,11 +10,11 @@ import modelo.Categoria;
 
 public class CategoriaDaoImpl extends GenericDaoImpl<Categoria, Serializable> implements CategoriaDao{
 
-	public Categoria buscarPorCategoria(ObjectContainer db, final String nombre) {
+	public Categoria buscarPorCategoria(ObjectContainer db, final String id) {
 
 		List<Categoria> lcategoria = db.query(new Predicate<Categoria>() {
 			public boolean match(Categoria categoria) {
-				return categoria.getNombre().equals(nombre);
+				return categoria.getId().equals(id);
 			}
 		});
 

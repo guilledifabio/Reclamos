@@ -1,7 +1,9 @@
 package modelo;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-
+import java.util.Date;
 import java.util.UUID;
 
 import com.db4o.activation.ActivationPurpose;
@@ -11,7 +13,7 @@ import com.db4o.ta.Activatable;
 import dto.CanjeDTO;
 
 public class Canje implements Activatable {
-
+	
 	private String id = null;
 	private LocalDateTime fecha;
 	private Producto producto;
@@ -32,13 +34,29 @@ public class Canje implements Activatable {
 		this.fecha = dia;
 		this.producto = null;
 	}
-
+	
 	public Canje(CanjeDTO canjeDto) {
 		this.id = UUID.randomUUID().toString();
 		this.fecha = canjeDto.getFecha();
-		this.producto = canjeDto.getProducto();
+		this.producto = null;
+	}
+	
+	public Canje(CanjeDTO canjeDto, Producto producto) {
+		this.id = UUID.randomUUID().toString();
+		this.fecha = canjeDto.getFecha();
+		this.producto = producto;
+	}
+	
+	public String getId() {
+		activate(ActivationPurpose.READ);
+		return id;
 	}
 
+	public void setId(String id) {
+		activate(ActivationPurpose.WRITE);
+		this.id = id;
+	}
+	
 	public LocalDateTime getFecha() {
 		activate(ActivationPurpose.READ);
 		return fecha;
@@ -57,16 +75,6 @@ public class Canje implements Activatable {
 	public void setProducto(Producto producto) {
 		activate(ActivationPurpose.WRITE);
 		this.producto = producto;
-	}
-
-	public String getId() {
-		activate(ActivationPurpose.READ);
-		return id;
-	}
-
-	public void setId(String id) {
-		activate(ActivationPurpose.WRITE);
-		this.id = id;
 	}
 
 	public void activate(ActivationPurpose purpose) {
@@ -89,13 +97,13 @@ public class Canje implements Activatable {
 	public String toString() {
 		return "Canje [fecha= " + fecha + "," + producto + "]";
 	}
-
+	
 	public CanjeDTO toDTO() {
 		CanjeDTO canjeDto = new CanjeDTO();
 		canjeDto.setId(this.id);
 		canjeDto.setFecha(this.fecha);
-		canjeDto.setProducto(this.producto);
-
+		canjeDto.setProducto(this.producto.toDTO());
+		
 		return canjeDto;
 	}
 

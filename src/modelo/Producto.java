@@ -1,17 +1,15 @@
 package modelo;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 import com.db4o.activation.ActivationPurpose;
 import com.db4o.activation.Activator;
 import com.db4o.ta.Activatable;
 
-import dto.CiudadanoDTO;
 import dto.ProductoDTO;
 
 public class Producto implements Activatable {
-
+	
 	private String id = null;
 	private String nombre;
 	private int puntosrequeridos;
@@ -23,6 +21,12 @@ public class Producto implements Activatable {
 		this.nombre = nombre;
 		this.puntosrequeridos = puntosrequeridos;
 	}
+	
+	public Producto(ProductoDTO productoDto) {
+		this.id = UUID.randomUUID().toString();
+		this.nombre = productoDto.getNombre();
+		this.puntosrequeridos = productoDto.getPuntosrequeridos();
+	}
 
 	public Producto(String id, String nombre, int puntosrequeridos) {
 		super();
@@ -30,13 +34,17 @@ public class Producto implements Activatable {
 		this.nombre = nombre;
 		this.puntosrequeridos = puntosrequeridos;
 	}
-
-	public Producto(ProductoDTO productoDto) {
-		this.id = UUID.randomUUID().toString();
-		this.nombre = productoDto.getNombre();
-		this.puntosrequeridos = productoDto.getPuntosrequeridos();
+	
+	public String getId() {
+		activate(ActivationPurpose.READ);
+		return id;
 	}
 
+	public void setId(String id) {
+		activate(ActivationPurpose.WRITE);
+		this.id = id;
+	}
+	
 	public String getNombre() {
 		activate(ActivationPurpose.READ);
 		return nombre;
@@ -63,16 +71,6 @@ public class Producto implements Activatable {
 		}
 	}
 
-	public String getId() {
-		activate(ActivationPurpose.READ);
-		return id;
-	}
-
-	public void setId(String id) {
-		activate(ActivationPurpose.WRITE);
-		this.id = id;
-	}
-
 	public void bind(Activator activator) {
 		if (_activator == activator) {
 			return;
@@ -85,16 +83,15 @@ public class Producto implements Activatable {
 
 	@Override
 	public String toString() {
-		return " Producto [id=" + id + ",nombre=" + nombre + ", puntosrequeridos=" + puntosrequeridos + "]";
+		return " Producto [nombre=" + nombre + ", puntosrequeridos=" + puntosrequeridos + "]";
 	}
-
+	
 	public ProductoDTO toDTO() {
 		ProductoDTO productoDto = new ProductoDTO();
-
-		productoDto.setId(this.getId());
-		productoDto.setNombre(this.getNombre());
-		productoDto.setPuntosrequeridos(this.getPuntosrequeridos());
-
+		productoDto.setId(this.id);
+		productoDto.setNombre(this.nombre);
+		productoDto.setPuntosrequeridos(this.puntosrequeridos);
+		
 		return productoDto;
 	}
 }

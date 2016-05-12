@@ -15,7 +15,17 @@ public class ReclamoDTO {
 	public ReclamoDTO() {
 		super();
 	}
-
+	
+	public ReclamoDTO(String descripcion, String direccion, CategoriaDTO categoria) {
+		super();
+		this.id = null;
+		this.fecha = null;
+		this.descripcion = descripcion;
+		this.direccion = direccion;
+		this.categoria = categoria;
+		this.eventos = null;
+	}
+	
 	public ReclamoDTO(String id, LocalDateTime fecha, String descripcion, String direccion, CategoriaDTO categoria,
 			List<EventoDTO> eventos) {
 		super();

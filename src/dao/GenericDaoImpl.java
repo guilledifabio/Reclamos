@@ -5,6 +5,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
 import modelo.Ciudadano;
+import modelo.Producto;
 
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
@@ -22,8 +23,6 @@ public abstract class GenericDaoImpl<T, Id extends Serializable> implements Gene
 				.getActualTypeArguments()[0];
 	}
 
-	
-
 	public ObjectSet<T> buscarTodos(ObjectContainer db) {
 
 		Query q = db.query();
@@ -37,9 +36,9 @@ public abstract class GenericDaoImpl<T, Id extends Serializable> implements Gene
 	public void borrar(ObjectContainer db, T objeto) {
 		try {
 			db.delete(objeto);
-			System.out.println("Eliminado " + objeto.getClass().getName());
+//			System.out.println("Eliminado " + objeto.getClass().getName());
 		} catch (Db4oException e) {
-			System.out.println("Error al eliminar : " + e.getMessage());
+//			System.out.println("Error al eliminar : " + e.getMessage());
 		}
 
 	}
@@ -48,9 +47,9 @@ public abstract class GenericDaoImpl<T, Id extends Serializable> implements Gene
 
 		try {
 			db.store(objeto);
-			System.out.println("Guardado " + objeto.getClass().getName());
+//			System.out.println("Guardado " + objeto.getClass().getName());
 		} catch (Db4oException e) {
-			System.out.println("Error al guardar : " + e.getMessage());
+//			System.out.println("Error al guardar : " + e.getMessage());
 		}
 
 	}

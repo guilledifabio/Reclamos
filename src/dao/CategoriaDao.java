@@ -10,6 +10,6 @@ import modelo.Categoria;
 
 public interface CategoriaDao {
 		
-		public abstract Categoria buscarPorCategoria(ObjectContainer db, String nombre);
+		public abstract Categoria buscarPorCategoria(ObjectContainer db, String id);
 
 }

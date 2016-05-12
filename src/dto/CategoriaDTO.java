@@ -1,7 +1,7 @@
 package dto;
 
 public class CategoriaDTO {
-	
+
 	private String id;
 	private String nombre;
 	private String descripcion;
@@ -13,6 +13,14 @@ public class CategoriaDTO {
 
 	public CategoriaDTO(String nombre, String descripcion, int puntos) {
 		super();
+		this.nombre = nombre;
+		this.descripcion = descripcion;
+		this.puntos = puntos;
+	}
+	
+	public CategoriaDTO(String id, String nombre, String descripcion, int puntos) {
+		super();
+		this.id = id;
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 		this.puntos = puntos;

@@ -11,7 +11,14 @@ public class EventoDTO {
 	public EventoDTO() {
 		super();
 	}
-
+	
+	public EventoDTO(String descripcion) {
+		super();
+		this.id = null;
+		this.fecha = null;
+		this.descripcion = descripcion;
+	}
+	
 	public EventoDTO(String id, LocalDateTime fecha, String descripcion) {
 		super();
 		this.id = id;

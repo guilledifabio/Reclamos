@@ -11,7 +11,7 @@ import dao.EventoDaoImpl;
 import dto.EventoDTO;
 
 public class Evento implements Activatable {
-	
+
 	private String id = null;
 	private LocalDateTime fecha;
 	private String descripcion;
@@ -27,12 +27,27 @@ public class Evento implements Activatable {
 
 	public Evento(String descripcion) {
 		super();
-		LocalDateTime dia = LocalDateTime.now();
 		this.id = UUID.randomUUID().toString();
-
-		this.fecha = dia;
+		this.fecha = LocalDateTime.now();
 		this.descripcion = descripcion;
 
+	}
+	
+	public Evento(EventoDTO eventoDto) {
+		super();
+		this.id = UUID.randomUUID().toString();
+		this.fecha = LocalDateTime.now();
+		this.descripcion = eventoDto.getDescripcion();
+	}
+	
+	public String getId() {
+		activate(ActivationPurpose.READ);
+		return id;
+	}
+
+	public void setId(String id) {
+		activate(ActivationPurpose.WRITE);
+		this.id = id;
 	}
 
 	public LocalDateTime getFecha() {
@@ -70,13 +85,18 @@ public class Evento implements Activatable {
 		}
 		_activator = activator;
 	}
-	
+
+	public String toString() {
+		String string = "Fecha: " + getFecha().toString() + " - " + getDescripcion();
+		return string;
+	}
+
 	public EventoDTO toDTO() {
 		EventoDTO eventoDto = new EventoDTO();
-		eventoDto.setId(this.id);
-		eventoDto.setFecha(this.fecha);
-		eventoDto.setDescripcion(this.descripcion);
-		
+		eventoDto.setId(getId());
+		eventoDto.setFecha(getFecha());
+		eventoDto.setDescripcion(getDescripcion());
+
 		return eventoDto;
 	}
 }

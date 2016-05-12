@@ -30,6 +30,7 @@ public class Reclamo implements Activatable {
 		this.direccion = direccion;
 		this.categoria = categoria;
 		this.eventos = new ArrayList<Evento>();
+		this.eventos.add(new Evento("El reclamo fue ingresado"));
 	}
 
 	public Reclamo(String id, String descripcion, String direccion, Categoria categoria) {
@@ -40,8 +41,29 @@ public class Reclamo implements Activatable {
 		this.direccion = direccion;
 		this.categoria = categoria;
 		this.eventos = new ArrayList<Evento>();
+		this.eventos.add(new Evento("El reclamo fue ingresado"));
+	}
+	
+	public Reclamo(ReclamoDTO reclamoDto, Categoria categoria) {
+		this.id = UUID.randomUUID().toString();
+		this.fecha = LocalDateTime.now();
+		this.descripcion = reclamoDto.getDescripcion();
+		this.direccion = reclamoDto.getDireccion();
+		this.categoria = categoria;
+		this.eventos = new ArrayList<Evento>();
+		this.eventos.add(new Evento("El reclamo fue ingresado"));
+	}
+	
+	public String getId() {
+		activate(ActivationPurpose.READ);
+		return id;
 	}
 
+	public void setId(String id) {
+		activate(ActivationPurpose.WRITE);
+		this.id = id;
+	}
+	
 	public List<Evento> getEventos() {
 		activate(ActivationPurpose.READ);
 		return eventos;
@@ -115,6 +137,16 @@ public class Reclamo implements Activatable {
 
 	}
 	
+	@Override
+	public String toString() {
+		String reclamo = " Categoria: " + this.getCategoria().toString() + " - Direccion: " + getDescripcion();
+		int i = 1;
+		for (Evento evento : eventos) {
+			reclamo += "\n "+ i++ + " - " + evento.toString();
+		}
+		return reclamo;
+	}
+	
 	public ReclamoDTO toDTO() {
 		ReclamoDTO reclamoDto = new ReclamoDTO();
 		reclamoDto.setId(this.id);
@@ -128,5 +160,4 @@ public class Reclamo implements Activatable {
 		
 		return reclamoDto;
 	}
-
 }

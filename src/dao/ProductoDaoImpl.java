@@ -12,19 +12,20 @@ public class ProductoDaoImpl extends GenericDaoImpl<Producto, Serializable> impl
 
 	public Producto buscar(ObjectContainer db, final String nombre) {
 
-		List<Producto> lcatalogo = db.query(new Predicate<Producto>() {
+		List<Producto> lproducto = db.query(new Predicate<Producto>() {
 			public boolean match(Producto producto) {
 				return producto.getNombre().equals(nombre);
 			}
 		});
 
-		if (lcatalogo.size() == 0) {
+		if (lproducto.size() == 0) {
 			return null;
 		}
-		Producto producto = lcatalogo.get(0);
+		Producto producto = lproducto.get(0);
 
 		return producto;
 	}
+	
 	public Producto buscarPorId(ObjectContainer db,final String id) {
 		// TODO Auto-generated method stub
 		List<Producto> result = db.query(new Predicate<Producto>() {
@@ -35,4 +36,5 @@ public class ProductoDaoImpl extends GenericDaoImpl<Producto, Serializable> impl
 		});
 		return result.get(0);
 	}
+
 }

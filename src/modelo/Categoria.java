@@ -9,7 +9,7 @@ import com.db4o.ta.Activatable;
 import dto.CategoriaDTO;
 
 public class Categoria implements Activatable {
-	
+
 	private String id = null;
 	private String nombre;
 	private String descripcion;
@@ -30,6 +30,24 @@ public class Categoria implements Activatable {
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 		this.puntos = puntos;
+	}
+
+	public Categoria(CategoriaDTO categoriaDto) {
+		super();
+		this.id = UUID.randomUUID().toString();
+		this.nombre = categoriaDto.getNombre();
+		this.descripcion = categoriaDto.getDescripcion();
+		this.puntos = categoriaDto.getPuntos();
+	}
+
+	public String getId() {
+		activate(ActivationPurpose.READ);
+		return id;
+	}
+
+	public void setId(String id) {
+		activate(ActivationPurpose.WRITE);
+		this.id = id;
 	}
 
 	public String getNombre() {
@@ -82,14 +100,15 @@ public class Categoria implements Activatable {
 	public String toString() {
 		return this.getNombre();
 	}
-	
+
 	public CategoriaDTO toDTO() {
 		CategoriaDTO categoriaDto = new CategoriaDTO();
-		categoriaDto.setId(this.id);
-		categoriaDto.setNombre(this.nombre);
-		categoriaDto.setDescripcion(this.descripcion);
-		categoriaDto.setPuntos(this.puntos);
-		
+		categoriaDto.setId(getId());
+		categoriaDto.setNombre(getNombre());
+		categoriaDto.setDescripcion(getDescripcion());
+		categoriaDto.setPuntos(getPuntos());
+
 		return categoriaDto;
 	}
+
 }

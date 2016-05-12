@@ -8,6 +8,7 @@ import com.db4o.activation.ActivationPurpose;
 import com.db4o.activation.Activator;
 import com.db4o.ta.Activatable;
 
+import dto.CanjeDTO;
 import dto.CatalogoDTO;
 import dto.ProductoDTO;
 
@@ -29,13 +30,23 @@ public class Catalogo implements Activatable {
 		super();
 		this.id = id;
 		this.nombre = nombre;
-		this.productos = new ArrayList<Producto>();
+		this.productos = null;
 	}
 
 	public Catalogo(CatalogoDTO catalogoDto) {
 		this.id = UUID.randomUUID().toString();
 		this.nombre = catalogoDto.getNombre();
-		this.productos = new ArrayList();
+		this.productos = new ArrayList<Producto>();
+	}
+
+	public String getId() {
+		activate(ActivationPurpose.READ);
+		return id;
+	}
+
+	public void setId(String id) {
+		activate(ActivationPurpose.WRITE);
+		this.id = id;
 	}
 
 	public String getNombre() {
@@ -58,22 +69,12 @@ public class Catalogo implements Activatable {
 		this.productos = productos;
 	}
 
-	public String getId() {
-		activate(ActivationPurpose.READ);
-		return id;
-	}
-
-	public void setId(String id) {
-		activate(ActivationPurpose.WRITE);
-		this.id = id;
-	}
-
 	public void agregarProducto(Producto prod) {
 		List<Producto> listaproducto = this.getProductos();
 		listaproducto.add(prod);
 		this.setProductos(listaproducto);
 	}
-
+	
 	public void agregarProducto(ProductoDTO prodDto) {
 		List<Producto> listaproducto = this.getProductos();
 		Producto prod = new Producto(prodDto);
@@ -112,15 +113,10 @@ public class Catalogo implements Activatable {
 		CatalogoDTO catalogoDto = new CatalogoDTO();
 		catalogoDto.setId(this.id);
 		catalogoDto.setNombre(this.nombre);
-		List<Producto> lproductos = new ArrayList<Producto>();
-
-		if (!productos.isEmpty()) {
-			for (Producto producto : productos) {
-				lproductos.add(producto);
-			}
+		List<ProductoDTO> lproductos = new ArrayList<ProductoDTO>();
+		for (Producto producto : productos) {
+			lproductos.add(producto.toDTO());
 		}
-
-		catalogoDto.setProductos(lproductos);
 
 		return catalogoDto;
 	}

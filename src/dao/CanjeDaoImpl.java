@@ -8,7 +8,6 @@ import com.db4o.ObjectSet;
 import com.db4o.query.Predicate;
 
 import modelo.Canje;
-import modelo.Catalogo;
 
 public class CanjeDaoImpl extends GenericDaoImpl<Canje, Serializable> implements CanjeDao {
 
@@ -22,7 +21,7 @@ public class CanjeDaoImpl extends GenericDaoImpl<Canje, Serializable> implements
 		return canjes;
 
 	}
-
+	
 	public Canje buscarPorId(ObjectContainer db, final String id) {
 		// TODO Auto-generated method stub
 		List<Canje> result = db.query(new Predicate<Canje>() {

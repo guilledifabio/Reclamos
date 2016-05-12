@@ -3,30 +3,28 @@ package dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import modelo.Producto;
-
 public class CatalogoDTO {
 
 	private String id = null;
 	private String nombre;
-	private List<Producto> productos;
+	private List<ProductoDTO> productos;
 
 	public CatalogoDTO() {
 		super();
 	}
-
-	public CatalogoDTO(String id, String nombre, List<Producto> productos) {
-		super();
-		this.id = id;
-		this.nombre = nombre;
-		this.productos = productos;
-	}
-
+	
 	public CatalogoDTO(String nombre) {
 		super();
 		this.id = null;
 		this.nombre = nombre;
-		this.productos = new ArrayList<Producto>();
+		this.productos = new ArrayList<ProductoDTO>();
+	}
+	
+	public CatalogoDTO(String id, String nombre, List<ProductoDTO> productos) {
+		super();
+		this.id = id;
+		this.nombre = nombre;
+		this.productos = productos;
 	}
 
 	public String getId() {
@@ -45,11 +43,11 @@ public class CatalogoDTO {
 		this.nombre = nombre;
 	}
 
-	public List<Producto> getProductos() {
+	public List<ProductoDTO> getProductos() {
 		return productos;
 	}
 
-	public void setProductos(List<Producto> productos) {
+	public void setProductos(List<ProductoDTO> productos) {
 		this.productos = productos;
 	}
 }

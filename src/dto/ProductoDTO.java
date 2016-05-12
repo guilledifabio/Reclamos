@@ -11,18 +11,13 @@ public class ProductoDTO {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ProductoDTO(String id, String nombre, int puntosrequeridos) {
-		super();
-		this.id = id;
-		this.nombre = nombre;
-		this.puntosrequeridos = puntosrequeridos;
-	}
 	public ProductoDTO(String nombre, int puntosrequeridos) {
 		super();
 		this.id = null;
 		this.nombre = nombre;
 		this.puntosrequeridos = puntosrequeridos;
 	}
+
 	public String getId() {
 		return id;
 	}

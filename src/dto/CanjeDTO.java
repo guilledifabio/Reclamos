@@ -2,30 +2,23 @@ package dto;
 
 import java.time.LocalDateTime;
 
-import modelo.Producto;
-
 public class CanjeDTO {
 
 	private String id;
 	private LocalDateTime fecha;
-	private Producto producto;
+	private ProductoDTO producto;
 
 	public CanjeDTO() {
 		super();
 	}
-
-	public CanjeDTO(String id, LocalDateTime fecha, Producto producto) {
+	
+	public CanjeDTO(String id, LocalDateTime fecha, ProductoDTO producto) {
 		super();
 		this.id = id;
 		this.fecha = fecha;
 		this.producto = producto;
 	}
-	public CanjeDTO( LocalDateTime fecha, Producto producto) {
-		super();
-		this.id = null;
-		this.fecha = fecha;
-		this.producto = producto;
-	}
+
 	public String getId() {
 		return id;
 	}
@@ -42,12 +35,11 @@ public class CanjeDTO {
 		this.fecha = fecha;
 	}
 
-	public Producto getProducto() {
+	public ProductoDTO getProducto() {
 		return producto;
 	}
 
-	public void setProducto(Producto producto) {
+	public void setProducto(ProductoDTO producto) {
 		this.producto = producto;
 	}
-
 }

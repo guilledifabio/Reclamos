@@ -1,5 +1,6 @@
 package dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CiudadanoDTO {
@@ -15,6 +16,18 @@ public class CiudadanoDTO {
 
 	public CiudadanoDTO() {
 		super();
+	}
+	
+	public CiudadanoDTO(String nombre, String apellido, int dni, String email) {
+		super();
+		this.id = null;
+		this.nombre = nombre;
+		this.apellido = apellido;
+		this.dni = dni;
+		this.email = email;
+		this.puntos = 0;
+		this.canjes = new ArrayList<CanjeDTO>();
+		this.reclamos = new ArrayList<ReclamoDTO>();
 	}
 
 	public CiudadanoDTO(String id, String nombre, String apellido, int dni, String email, int puntos,

@@ -117,6 +117,13 @@ public class Reclamos {
 		activo.realizarReclamo(reclamo);
 		db.commit();
 	}
+	
+
+	public void canjearPuntos(String nProducto) {
+		Producto pro = productoDAO.buscar(db, nProducto);
+		activo.canjearPuntos(pro);
+		db.commit();
+	}
 
 	public void crearCategoria(String nCategoria, String descripcion, int puntos) {
 		Categoria categoria = new Categoria(nCategoria, descripcion, puntos);
