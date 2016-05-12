@@ -25,6 +25,7 @@ public class Ciudadano implements Activatable {
 	private int puntos;
 	private List<Canje> canjes;
 	private List<Reclamo> reclamos;
+	private ProveedorDelTiempo tiempo;
 	private transient Activator _activator;
 
 	public Ciudadano(String nombre, String apellido, int dni, String email) {
@@ -37,6 +38,7 @@ public class Ciudadano implements Activatable {
 		this.puntos = 0;
 		this.canjes = new ArrayList();
 		this.reclamos = new ArrayList();
+		this.tiempo = new ProveedorDelTiempo();
 	}
 
 	public Ciudadano(String id, String nombre, String apellido, int dni, String email) {
@@ -49,6 +51,20 @@ public class Ciudadano implements Activatable {
 		this.puntos = 0;
 		this.canjes = new ArrayList();
 		this.reclamos = new ArrayList();
+		this.tiempo = new ProveedorDelTiempo();
+	}
+	
+	public Ciudadano(String id, String nombre, String apellido, int dni, String email, ProveedorDelTiempo tiempo) {
+		super();
+		this.id = id;
+		this.nombre = nombre;
+		this.apellido = apellido;
+		this.dni = dni;
+		this.email = email;
+		this.puntos = 0;
+		this.canjes = new ArrayList();
+		this.reclamos = new ArrayList();
+		this.tiempo = tiempo;
 	}
 
 	public Ciudadano(CiudadanoDTO ciudadanoDto) {
@@ -60,6 +76,7 @@ public class Ciudadano implements Activatable {
 		this.puntos = ciudadanoDto.getPuntos();
 		this.canjes = new ArrayList();
 		this.reclamos = new ArrayList();
+		this.tiempo = ciudadanoDto.getFecha();
 	}
 
 	public List<CanjeDTO> listCanjesDTO() {
@@ -154,34 +171,22 @@ public class Ciudadano implements Activatable {
 	public void realizarReclamo(Reclamo reclamo) {
 		Integer pts = 0;
 
-		LocalDateTime dia = LocalDateTime.parse("2016-08-27T10:11:30");
+//		LocalDateTime dia = LocalDateTime.parse("2016-08-27T10:11:30");
 
-		if (esPrimavera(dia) && esFinde(dia)) {
-			pts = reclamo.getCategoria().getPuntos() * 2;// Duplico
-			// los
-			// puntos
+		if (esPrimavera(tiempo.getDia()) && esFinde(tiempo.getDia())) {
+			// Duplico puntos
+			pts = reclamo.getCategoria().getPuntos() * 2;
 		} else {
-
 			pts = reclamo.getCategoria().getPuntos();
 		}
+		
 		this.setPuntos(this.getPuntos() + pts);
-
 		this.reclamos.add(reclamo);
 
 		System.out.println(
 				"Se realizo el Reclamo " + reclamo.getDescripcion() + " correctamente por: " + pts + " puntos");
 
-	}// Obtengo
-		// la
-		// categoria
-		// del
-		// Reclamo
-		// y
-		// actualizo
-		// los
-		// puntos
-		// del
-		// Ciudadano
+	}// Obtengo la categoria del Reclamo y actualizo los puntos del Ciudadano 
 
 	public void canjearPuntos(Producto pro) {
 		Integer pts = null;
@@ -193,11 +198,10 @@ public class Ciudadano implements Activatable {
 					+ ", no tiene los Puntos requeridos para realizar el canje ");
 
 		} else {
-			LocalDateTime dia = LocalDateTime.parse("2016-08-22T10:11:30");
+//			LocalDateTime dia = LocalDateTime.parse("2016-08-22T10:11:30");
 
-			if (esPrimavera(dia) && this.puntos > 10) { // Periodo
-				// de
-				// Primavera
+			if (esPrimavera(tiempo.getDia()) && this.puntos > 10) { 
+				// Periodo de Primavera
 				System.out.println("Entro en primavera");
 				pt = pro.getPuntosrequeridos() / 2;
 				pts = this.getPuntos() - (pt);

@@ -3,6 +3,8 @@ package dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import modelo.ProveedorDelTiempo;
+
 public class CiudadanoDTO {
 
 	private String id = null;
@@ -13,6 +15,7 @@ public class CiudadanoDTO {
 	private int puntos;
 	private List<CanjeDTO> canjes;
 	private List<ReclamoDTO> reclamos;
+	private ProveedorDelTiempo fecha;
 
 	public CiudadanoDTO() {
 		super();
@@ -28,8 +31,9 @@ public class CiudadanoDTO {
 		this.puntos = 0;
 		this.canjes = new ArrayList<CanjeDTO>();
 		this.reclamos = new ArrayList<ReclamoDTO>();
+		this.fecha = null;
 	}
-
+	
 	public CiudadanoDTO(String id, String nombre, String apellido, int dni, String email, int puntos,
 			List<CanjeDTO> canjes, List<ReclamoDTO> reclamos) {
 		super();
@@ -41,6 +45,21 @@ public class CiudadanoDTO {
 		this.puntos = puntos;
 		this.canjes = canjes;
 		this.reclamos = reclamos;
+		this.fecha = null;
+	}
+	
+	public CiudadanoDTO(String id, String nombre, String apellido, int dni, String email, int puntos,
+			List<CanjeDTO> canjes, List<ReclamoDTO> reclamos, ProveedorDelTiempo fecha) {
+		super();
+		this.id = id;
+		this.nombre = nombre;
+		this.apellido = apellido;
+		this.dni = dni;
+		this.email = email;
+		this.puntos = puntos;
+		this.canjes = canjes;
+		this.reclamos = reclamos;
+		this.fecha = fecha;
 	}
 
 	public String getId() {
@@ -105,5 +124,9 @@ public class CiudadanoDTO {
 
 	public void setProductos(List<ReclamoDTO> reclamos) {
 		this.reclamos = reclamos;
+	}
+	
+	public ProveedorDelTiempo getFecha() {
+		return fecha;
 	}
 }

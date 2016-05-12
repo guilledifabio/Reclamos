@@ -35,6 +35,7 @@ public class Api {
 
 	private String nombreDB = "reclamos";
 	private static ObjectContainer db = null;
+	private ObjectContainer session = null;
 
 	private CiudadanoDaoImpl ciudadanoDAO = new CiudadanoDaoImpl();
 	private CategoriaDaoImpl categoriaDAO = new CategoriaDaoImpl();
@@ -44,119 +45,183 @@ public class Api {
 	private ProductoDaoImpl productoDAO = new ProductoDaoImpl();
 	private CanjeDaoImpl canjeDAO = new CanjeDaoImpl();
 
-	public void conectarDB() {
-		if (db == null) {
-			EmbeddedConfiguration config = Db4oEmbedded.newConfiguration();
-			config.common().add(new TransparentPersistenceSupport());
-			config.common().objectClass(Catalogo.class).cascadeOnUpdate(true);
-			config.common().objectClass(Ciudadano.class).cascadeOnUpdate(true);
-			config.common().objectClass(Reclamo.class).cascadeOnUpdate(true);
-			config.common().objectClass(Categoria.class).cascadeOnUpdate(true);
+	public Api() {
+		super();
+		EmbeddedConfiguration config = Db4oEmbedded.newConfiguration();
+		config.common().add(new TransparentPersistenceSupport());
+		config.common().objectClass(Catalogo.class).cascadeOnUpdate(true);
+		config.common().objectClass(Ciudadano.class).cascadeOnUpdate(true);
+		config.common().objectClass(Reclamo.class).cascadeOnUpdate(true);
+		config.common().objectClass(Categoria.class).cascadeOnUpdate(true);
+		try {
 			db = Db4oEmbedded.openFile(config, nombreDB);
-		} else {
-			System.out.println("Desconecte primero la Base de Datos");
+		} catch (Exception e) {
+			System.out.println("Error al abrir el archivo de base de datos");
 		}
 	}
 
-	public void desconectarDB() {
-		if (db == null) {
-			System.out.println("Primero se debe cargar la base de datos");
-		} else {
-			db.close();
-			db = null;
+	private void conectarDB() {
+		try {
+			session = db.ext().openSession();
+		} catch (Exception e) {
+			System.out.println("Error al conectar a la base de datos");
 		}
+
+	}
+
+	private void desconectarDB() {
+		try {
+			session.close();
+		} catch (Exception e) {
+			System.out.println("Error al desconectar base de datos");
+		}
+
 	}
 
 	// METODOS CIUDADANO
 	public CiudadanoDTO crearCiudadano(CiudadanoDTO ciudadanoDto) {
-		Ciudadano ciudadano = new Ciudadano(ciudadanoDto);
-		ciudadanoDAO.salvar(db, ciudadano);
+		conectarDB();
+		try {
+			Ciudadano ciudadano = new Ciudadano(ciudadanoDto);
+			ciudadanoDAO.salvar(db, ciudadano);
+			ciudadanoDto = ciudadano.toDTO();
+		} finally {
+			desconectarDB();
+		}
 
-		return ciudadano.toDTO();
+		return ciudadanoDto;
 	}
 
 	public void eliminarCiudadano(CiudadanoDTO ciudadanoDto) {
-		Ciudadano ciudadano = ciudadanoDAO.buscarPorDni(db, ciudadanoDto.getDni());
-		ciudadanoDAO.borrar(db, ciudadano);
+		conectarDB();
+		try {
+			Ciudadano ciudadano = ciudadanoDAO.buscarPorDni(db, ciudadanoDto.getDni());
+			ciudadanoDAO.borrar(db, ciudadano);
+		} finally {
+			desconectarDB();
+		}
 	}
 
 	public CiudadanoDTO buscarCiudadano(CiudadanoDTO ciudadanoDto) {
-
-		Ciudadano ciudadano = ciudadanoDAO.buscarPorDni(db, ciudadanoDto.getDni());
-
-		return ciudadano.toDTO();
+		conectarDB();
+		try {
+			Ciudadano ciudadano = ciudadanoDAO.buscarPorDni(db, ciudadanoDto.getDni());
+			ciudadanoDto = ciudadano.toDTO();
+		} finally {
+			desconectarDB();
+		}
+		
+		return ciudadanoDto;
 	}
 
 	public CiudadanoDTO modificarCiudadano(CiudadanoDTO ciudadanoDto) {
-		Ciudadano ciudadano = ciudadanoDAO.buscarPorDni(db, ciudadanoDto.getDni());
-		ciudadano.setNombre(ciudadanoDto.getNombre());
-		ciudadano.setApellido(ciudadanoDto.getApellido());
-		ciudadano.setEmail(ciudadanoDto.getEmail());
-		ciudadano.setPuntos(ciudadanoDto.getPuntos());
-
-		db.commit();
-		return ciudadano.toDTO();
+		conectarDB();
+		try {
+			Ciudadano ciudadano = ciudadanoDAO.buscarPorDni(db, ciudadanoDto.getDni());
+			ciudadano.setNombre(ciudadanoDto.getNombre());
+			ciudadano.setApellido(ciudadanoDto.getApellido());
+			ciudadano.setEmail(ciudadanoDto.getEmail());
+			ciudadano.setPuntos(ciudadanoDto.getPuntos());
+			db.commit();
+			ciudadanoDto = ciudadano.toDTO();
+		} finally {
+			desconectarDB();
+		}
+		
+		return ciudadanoDto;
 	}
 
 	public void listarCiudadanos() {
-		ObjectSet<Ciudadano> ciudadanos = ciudadanoDAO.buscarTodos(db);
-		for (Ciudadano ciudadano : ciudadanos) {
-			System.out.println("Nombre: " + ciudadano.getNombre() + " " + ciudadano.getApellido());
-			System.out.println("DNI: " + ciudadano.getDni());
-			System.out.println("Canjes: ");
-			List<Canje> lcanje = ciudadano.getCanjes();
-			for (Canje canje : lcanje) {
-				System.out.println(canje.toString());
+		conectarDB();
+		try {
+			ObjectSet<Ciudadano>  ciudadanos = ciudadanoDAO.buscarTodos(db);
+			for (Ciudadano ciudadano : ciudadanos) {
+				System.out.println("Nombre: " + ciudadano.getNombre() + " " + ciudadano.getApellido());
+				System.out.println("DNI: " + ciudadano.getDni());
+				System.out.println("Canjes: ");
+				List<Canje> lcanje = ciudadano.getCanjes();
+				for (Canje canje : lcanje) {
+					System.out.println(canje.toString());
+				}
 			}
+		} finally {
+			desconectarDB();
 		}
 	}
 
 	public void listarCiudadano(CiudadanoDTO ciudadanoDto) {
-		Ciudadano ciudadano = ciudadanoDAO.buscarPorDni(db, ciudadanoDto.getDni());
-		List<Canje> lcanjes = ciudadano.getCanjes();
-		System.out.println("Nombre: " + ciudadano.getNombre() + " " + ciudadano.getApellido());
-		System.out.println("DNI: " + ciudadano.getDni());
-		System.out.println("Canjes: ");
-		for (Canje canje : lcanjes) {
-			System.out.println(canje.toString());
+		conectarDB();
+		try {
+			Ciudadano ciudadano = ciudadanoDAO.buscarPorDni(db, ciudadanoDto.getDni());
+			List<Canje> lcanjes = ciudadano.getCanjes();
+			System.out.println("Nombre: " + ciudadano.getNombre() + " " + ciudadano.getApellido());
+			System.out.println("DNI: " + ciudadano.getDni());
+			System.out.println("Canjes: ");
+			for (Canje canje : lcanjes) {
+				System.out.println(canje.toString());
+			}
+		} finally {
+			desconectarDB();
 		}
 	}
 	// FIN METODOS CIUDADANO
 
 	// METODOS CATEGORIA
 	public CategoriaDTO crearCategoria(CategoriaDTO categoriaDto) {
-		Categoria categoria = new Categoria(categoriaDto);
-		categoriaDAO.salvar(db, categoria);
-		return categoria.toDTO();
+		conectarDB();
+		try {
+			Categoria categoria = new Categoria(categoriaDto);
+			categoriaDAO.salvar(db, categoria);
+			categoriaDto = categoria.toDTO();
+		} finally {
+			desconectarDB();
+		}
+		
+		return categoriaDto;
 	}
 
 	public void eliminarCategoria(CategoriaDTO categoriaDto) {
-		Categoria categoria = categoriaDAO.buscarPorCategoria(db, categoriaDto.getId());
-		categoriaDAO.borrar(db, categoria);
+		conectarDB();
+		try {
+			Categoria categoria = categoriaDAO.buscarPorCategoria(db, categoriaDto.getId());
+			categoriaDAO.borrar(db, categoria);
+		} finally {
+			desconectarDB();
+		}
 	}
 
 	public CategoriaDTO modificarCategoria(CategoriaDTO categoriaDto) {
-		Categoria categoria = categoriaDAO.buscarPorCategoria(db, categoriaDto.getId());
-		categoria.setNombre(categoriaDto.getNombre());
-		categoria.setDescripcion(categoriaDto.getDescripcion());
-		categoria.setPuntos(categoriaDto.getPuntos());
-
-		db.commit();
-		return categoria.toDTO();
+		conectarDB();
+		try {
+			Categoria categoria = categoriaDAO.buscarPorCategoria(db, categoriaDto.getId());
+			categoria.setNombre(categoriaDto.getNombre());
+			categoria.setDescripcion(categoriaDto.getDescripcion());
+			categoria.setPuntos(categoriaDto.getPuntos());
+			db.commit();
+			categoriaDto = categoria.toDTO();
+		} finally {
+			desconectarDB();
+		}
+		
+		return categoriaDto;
 	}
 
 	public List<CategoriaDTO> listarCategorias() {
-		ObjectSet<Categoria> categorias = categoriaDAO.buscarTodos(db);
+		conectarDB();
 		List<CategoriaDTO> lcategoria = new ArrayList<CategoriaDTO>();
-
-		for (Categoria categoria : categorias) {
-			lcategoria.add(categoria.toDTO());
-			// System.out.println("Categoria Nombre: " + categoria.getNombre() +
-			// " Descripcion: "
-			// + categoria.getDescripcion() + " Puntos: " +
-			// categoria.getPuntos());
+		try {
+			ObjectSet<Categoria> categorias = categoriaDAO.buscarTodos(db);
+			for (Categoria categoria : categorias) {
+				lcategoria.add(categoria.toDTO());
+				// System.out.println("Categoria Nombre: " + categoria.getNombre() +
+				// " Descripcion: "
+				// + categoria.getDescripcion() + " Puntos: " +
+				// categoria.getPuntos());
+			}
+		} finally {
+			desconectarDB();
 		}
-
+		
 		return lcategoria;
 	}
 
@@ -164,86 +229,124 @@ public class Api {
 
 	// METODOS RECLAMOS
 	public void crearReclamo(CiudadanoDTO ciudadanoDto, ReclamoDTO reclamoDto) {
-		Ciudadano ciudadano = ciudadanoDAO.buscarPorDni(db, ciudadanoDto.getDni());
-		Categoria categoria = categoriaDAO.buscarPorCategoria(db, reclamoDto.getCategoria().getId());
-		Reclamo reclamo = new Reclamo(reclamoDto, categoria);
-		ciudadano.realizarReclamo(reclamo);
-
-		db.commit();
+		conectarDB();
+		try {
+			Ciudadano ciudadano = ciudadanoDAO.buscarPorDni(db, ciudadanoDto.getDni());
+			Categoria categoria = categoriaDAO.buscarPorCategoria(db, reclamoDto.getCategoria().getId());
+			Reclamo reclamo = new Reclamo(reclamoDto, categoria);
+			ciudadano.realizarReclamo(reclamo);
+			db.commit();
+		} finally {
+			desconectarDB();
+		}
 	}
 
 	public ReclamoDTO modificarReclamo(ReclamoDTO reclamoDto) {
-		Reclamo reclamo = reclamoDAO.buscarPorId(db, reclamoDto.getId());
-		reclamo.setDescripcion(reclamoDto.getDescripcion());
-		reclamo.setDireccion(reclamoDto.getDireccion());
-
-		db.commit();
-		return reclamo.toDTO();
+		conectarDB();
+		try {
+			Reclamo reclamo = reclamoDAO.buscarPorId(db, reclamoDto.getId());
+			reclamo.setDescripcion(reclamoDto.getDescripcion());
+			reclamo.setDireccion(reclamoDto.getDireccion());
+			db.commit();
+			reclamoDto = reclamo.toDTO();
+		} finally {
+			desconectarDB();
+		}
+		
+		return reclamoDto;
 	}
 
 	public ReclamoDTO modificarCategoria(ReclamoDTO reclamoDto, CategoriaDTO categoriaDto) {
-		Reclamo reclamo = reclamoDAO.buscarPorId(db, reclamoDto.getId());
-		Categoria categoria = categoriaDAO.buscarPorCategoria(db, categoriaDto.getId());
-		reclamo.setCategoria(categoria);
-
-		db.commit();
-		return reclamo.toDTO();
+		conectarDB();
+		try {
+			Reclamo reclamo = reclamoDAO.buscarPorId(db, reclamoDto.getId());
+			Categoria categoria = categoriaDAO.buscarPorCategoria(db, categoriaDto.getId());
+			reclamo.setCategoria(categoria);
+			db.commit();
+			reclamoDto = reclamo.toDTO();
+		} finally {
+			desconectarDB();
+		}
+		
+		return reclamoDto;
 	}
 
 	public List<ReclamoDTO> listarReclamoCiudadano(CiudadanoDTO ciudadanoDto) {
-		Ciudadano ciudadano = ciudadanoDAO.buscarPorDni(db, ciudadanoDto.getDni());
-		List<Reclamo> lreclamos = ciudadano.getReclamos();
+		conectarDB();
 		List<ReclamoDTO> lreclamosDto = new ArrayList<ReclamoDTO>();
-		for (Reclamo reclamo : lreclamos) {
-			// System.out.println("Reclamos del ciudadano; " +
-			// ciudadano.getNombre() + " " + ciudadano.getApellido());
-			// System.out.println(reclamo.toString());
-			lreclamosDto.add(reclamo.toDTO());
+		try {
+			Ciudadano ciudadano = ciudadanoDAO.buscarPorDni(db, ciudadanoDto.getDni());
+			List<Reclamo> lreclamos = ciudadano.getReclamos();
+			for (Reclamo reclamo : lreclamos) {
+				// System.out.println("Reclamos del ciudadano; " +
+				// ciudadano.getNombre() + " " + ciudadano.getApellido());
+				// System.out.println(reclamo.toString());
+				lreclamosDto.add(reclamo.toDTO());
+			}
+		} finally {
+			desconectarDB();
 		}
-
+		
 		return lreclamosDto;
 	}
 	// FIN METODOS RECLAMOS
 
 	// METODOS EVENTO
 	public ReclamoDTO agregarEventoReclamo(ReclamoDTO reclamoDto, EventoDTO eventoDto) {
-		Evento evento = new Evento(eventoDto);
-		Reclamo reclamo = reclamoDAO.buscarPorId(db, reclamoDto.getId());
-		List<Evento> leventos = reclamo.getEventos();
-		leventos.add(evento);
-		reclamo.setEventos(leventos);
-
-		db.commit();
-		return reclamo.toDTO();
+		conectarDB();
+		try {
+			Evento evento = new Evento(eventoDto);
+			Reclamo reclamo = reclamoDAO.buscarPorId(db, reclamoDto.getId());
+			List<Evento> leventos = reclamo.getEventos();
+			leventos.add(evento);
+			reclamo.setEventos(leventos);
+			db.commit();
+			reclamoDto = reclamo.toDTO();
+		} finally {
+			desconectarDB();
+		}
+		
+		return reclamoDto;
 	}
 
 	public void modificarEventoReclamo(EventoDTO eventoDto) {
-		Evento evento = eventoDAO.buscarPorId(db, eventoDto.getId());
-		evento.setDescripcion(eventoDto.getDescripcion());
-
-		db.commit();
+		conectarDB();
+		try {
+			Evento evento = eventoDAO.buscarPorId(db, eventoDto.getId());
+			evento.setDescripcion(eventoDto.getDescripcion());
+			db.commit();
+		} finally {
+			desconectarDB();
+		}
 	}
 
 	public void eliminarEventoDeReclamo(ReclamoDTO reclamoDto, EventoDTO eventoDto) {
-		Reclamo reclamo = reclamoDAO.buscarPorId(db, reclamoDto.getId());
-		Evento evento = eventoDAO.buscarPorId(db, eventoDto.getId());
-		List<Evento> leventos = reclamo.getEventos();
-		leventos.remove(evento);
-
-		eventoDAO.borrar(db, evento);
-
-		db.commit();
+		conectarDB();
+		try {
+			Reclamo reclamo = reclamoDAO.buscarPorId(db, reclamoDto.getId());
+			Evento evento = eventoDAO.buscarPorId(db, eventoDto.getId());
+			List<Evento> leventos = reclamo.getEventos();
+			leventos.remove(evento);
+			eventoDAO.borrar(db, evento);
+			db.commit();
+		} finally {
+			desconectarDB();
+		}
 	}
 
 	public List<EventoDTO> listarEventosReclamo(ReclamoDTO reclamoDto) {
-		Reclamo reclamo = reclamoDAO.buscarPorId(db, reclamoDto.getId());
-		List<Evento> leventos = reclamo.getEventos();
+		conectarDB();
 		List<EventoDTO> leventosDto = new ArrayList<EventoDTO>();
-
-		for (Evento evento : leventos) {
-			leventosDto.add(evento.toDTO());
+		try {
+			Reclamo reclamo = reclamoDAO.buscarPorId(db, reclamoDto.getId());
+			List<Evento> leventos = reclamo.getEventos();
+			for (Evento evento : leventos) {
+				leventosDto.add(evento.toDTO());
+			}
+			System.out.println(reclamo.toString());
+		} finally {
+			desconectarDB();
 		}
-		System.out.println(reclamo.toString());
 
 		return leventosDto;
 	}
@@ -251,133 +354,227 @@ public class Api {
 
 	// METODOS PRODUCTOS
 	public ProductoDTO crearProducto(ProductoDTO productoDto) {
-		Producto producto = new Producto(productoDto);
-		productoDAO.salvar(db, producto);
+		conectarDB();
+		try {
+			Producto producto = new Producto(productoDto);
+			productoDAO.salvar(db, producto);
+			productoDto = producto.toDTO();
+		} finally {
+			desconectarDB();
+		}
+		
 
-		return producto.toDTO();
+		return productoDto;
 	}
 
 	public ProductoDTO buscarProducto(ProductoDTO productoDto) {
-		Producto producto = productoDAO.buscarPorId(db, productoDto.getId());
-		return producto.toDTO();
+		conectarDB();
+		try {
+			Producto producto = productoDAO.buscarPorId(db, productoDto.getId());
+			productoDto = producto.toDTO();
+		} finally {
+			desconectarDB();
+		}
+	
+		return productoDto;
 	}
 
 	public ProductoDTO modificarProducto(ProductoDTO productoDto) {
-		Producto producto = productoDAO.buscarPorId(db, productoDto.getId());
-		producto.setNombre(productoDto.getNombre());
-		producto.setPuntosrequeridos(productoDto.getPuntosrequeridos());
+		conectarDB();
+		try {
+			Producto producto = productoDAO.buscarPorId(db, productoDto.getId());
+			producto.setNombre(productoDto.getNombre());
+			producto.setPuntosrequeridos(productoDto.getPuntosrequeridos());
+			productoDto = producto.toDTO();
+		} finally {
+			desconectarDB();
+		}
 
-		return producto.toDTO();
+		return productoDto;
 	}
 
 	public void eliminarProducto(ProductoDTO productoDto) {
-		Producto producto = productoDAO.buscarPorId(db, productoDto.getId());
-		productoDAO.borrar(db, producto);
+		conectarDB();
+		try {
+			Producto producto = productoDAO.buscarPorId(db, productoDto.getId());
+			productoDAO.borrar(db, producto);
+		} finally {
+			desconectarDB();
+		}
 	}
 
 	public void listarProductos() {
-		ObjectSet<Producto> productos = productoDAO.buscarTodos(db);
-		for (Producto producto : productos) {
-			System.out.println("Nombre: " + producto.getNombre());
-			System.out.println("Puntos requeridos: " + producto.getPuntosrequeridos());
+		conectarDB();
+		try {
+			ObjectSet<Producto> productos = productoDAO.buscarTodos(db);
+			for (Producto producto : productos) {
+				System.out.println("Nombre: " + producto.getNombre());
+				System.out.println("Puntos requeridos: " + producto.getPuntosrequeridos());
+			}
+		} finally {
+			desconectarDB();
 		}
 	}
 
 	// METODOS CATALOGOS
 	public CatalogoDTO crearCatalogo(CatalogoDTO catalogoDto) {
-		Catalogo catalogo = new Catalogo(catalogoDto);
-		catalogoDAO.salvar(db, catalogo);
-
-		return catalogo.toDTO();
+		conectarDB();
+		try {
+			Catalogo catalogo = new Catalogo(catalogoDto);
+			catalogoDAO.salvar(db, catalogo);
+			catalogoDto = catalogo.toDTO();
+		} finally {
+			desconectarDB();
+		}
+		
+		return catalogoDto;
 	}
 
 	public CatalogoDTO agregarProductoaCatalogo(CatalogoDTO catalogoDto, ProductoDTO productoDto) {
-		Catalogo catalogo = catalogoDAO.buscarPorId(db, catalogoDto.getId());
-		catalogo.agregarProducto(productoDto);
-		catalogoDAO.salvar(db, catalogo);
+		conectarDB();
+		try {
+			Catalogo catalogo = catalogoDAO.buscarPorId(db, catalogoDto.getId());
+			catalogo.agregarProducto(productoDto);
+			catalogoDAO.salvar(db, catalogo);
+			catalogoDto = catalogo.toDTO();
+		} finally {
+			desconectarDB();
+		}
+		
 
-		return catalogo.toDTO();
+		return catalogoDto;
 	}
 
 	public CatalogoDTO buscarCatalogo(CatalogoDTO catalogoDto) {
+		conectarDB();
+		try {
+			Catalogo catalogo = catalogoDAO.buscarPorId(db, catalogoDto.getId());
+			catalogoDto = catalogo.toDTO();
+		} finally {
+			desconectarDB();
+		}
 
-		Catalogo catalogo = catalogoDAO.buscarPorId(db, catalogoDto.getId());
-
-		return catalogo.toDTO();
+		return catalogoDto;
 	}
 
 	public CatalogoDTO modificarCatalogo(CatalogoDTO catalogoDto) {
-		Catalogo catalogo = catalogoDAO.buscarPorId(db, catalogoDto.getId());
-		catalogo.setNombre(catalogoDto.getNombre());
-		List<ProductoDTO> lproductos = catalogoDto.getProductos();
-		if (lproductos != null) {
-			for (ProductoDTO productosDTO : lproductos) {
-				productosDTO = modificarProducto(productosDTO);
+		conectarDB();
+		try {
+			Catalogo catalogo = catalogoDAO.buscarPorId(db, catalogoDto.getId());
+			catalogo.setNombre(catalogoDto.getNombre());
+			List<ProductoDTO> lproductos = catalogoDto.getProductos();
+			if (lproductos != null) {
+				for (ProductoDTO productosDTO : lproductos) {
+					productosDTO = modificarProducto(productosDTO);
+				}
 			}
-		}		
 
-//		catalogo.setNombre(catalogoDto.getNombre());
-//		catalogo.setProductos(catalogoDto.getProductos());
+			// catalogo.setNombre(catalogoDto.getNombre());
+			// catalogo.setProductos(catalogoDto.getProductos());
 
-		db.commit();
-		return catalogo.toDTO();
+			db.commit();
+			catalogoDto = catalogo.toDTO();
+		} finally {
+			desconectarDB();
+		}
+
+		return catalogoDto;
 	}
 
 	public void eliminarCatalogo(CatalogoDTO catalogoDto) {
-		Catalogo catalogo = catalogoDAO.buscarPorId(db, catalogoDto.getId());
-		catalogoDAO.borrar(db, catalogo);
+		conectarDB();
+		try {
+			Catalogo catalogo = catalogoDAO.buscarPorId(db, catalogoDto.getId());
+			catalogoDAO.borrar(db, catalogo);
+		} finally {
+			desconectarDB();
+		}
 	}
 
 	public void listarCatalogos() {
-		ObjectSet<Catalogo> catalogos = catalogoDAO.buscarTodos(db);
-		for (Catalogo catalogo : catalogos) {
-			System.out.println("Catalogo: " + catalogo.toString());
-
+		conectarDB();
+		try {
+			ObjectSet<Catalogo> catalogos = catalogoDAO.buscarTodos(db);
+			for (Catalogo catalogo : catalogos) {
+				System.out.println("Catalogo: " + catalogo.toString());
+			}
+		} finally {
+			desconectarDB();
 		}
 	}
 
 	// METODOS CANJES
 	public CanjeDTO crearCanje(CanjeDTO canjeDto) {
-		Canje canje = new Canje(canjeDto);
-		canjeDAO.salvar(db, canje);
-
-		return canje.toDTO();
+		conectarDB();
+		try {
+			Canje canje = new Canje(canjeDto);
+			canjeDAO.salvar(db, canje);
+			canjeDto = canje.toDTO();
+		} finally {
+			desconectarDB();
+		}
+	
+		return canjeDto;
 	}
 
 	public CanjeDTO buscarCanje(CanjeDTO canjeDto) {
-
-		Canje canje = canjeDAO.buscarPorId(db, canjeDto.getId());
-
-		return canje.toDTO();
+		conectarDB();
+		try {
+			Canje canje = canjeDAO.buscarPorId(db, canjeDto.getId());
+			canjeDto = canje.toDTO();
+		} finally {
+			desconectarDB();
+		}
+		
+		return canjeDto;
 	}
 
 	public CanjeDTO modificarCanje(CanjeDTO canjeDto) {
-		Canje canje = canjeDAO.buscarPorId(db, canjeDto.getId());
-		Producto producto = productoDAO.buscarPorId(db, canjeDto.getProducto().getId());
-		canje.setFecha(canjeDto.getFecha());
-		canje.setProducto(producto);
-
-		db.commit();
-		return canje.toDTO();
+		conectarDB();
+		try {
+			Canje canje = canjeDAO.buscarPorId(db, canjeDto.getId());
+			Producto producto = productoDAO.buscarPorId(db, canjeDto.getProducto().getId());
+			canje.setFecha(canjeDto.getFecha());
+			canje.setProducto(producto);
+			db.commit();
+			canjeDto = canje.toDTO();
+		} finally {
+			desconectarDB();
+		}
+		
+		return canjeDto;
 	}
 
 	public void eliminarCanje(CanjeDTO canjeDto) {
-		Canje canje = canjeDAO.buscarPorId(db, canjeDto.getId());
-		canjeDAO.borrar(db, canje);
+		conectarDB();
+		try {
+			Canje canje = canjeDAO.buscarPorId(db, canjeDto.getId());
+			canjeDAO.borrar(db, canje);
+		} finally {
+			desconectarDB();
+		}
 	}
 
 	public void realizarCanje(CiudadanoDTO ciudadanoDto, ProductoDTO productoDto) {
-		Ciudadano ciudadano = ciudadanoDAO.buscarPorDni(db, ciudadanoDto.getDni());
-		Producto producto = new Producto(productoDto);
-		ciudadano.canjearPuntos(producto);
-
+		conectarDB();
+		try {
+			Ciudadano ciudadano = ciudadanoDAO.buscarPorDni(db, ciudadanoDto.getDni());
+			Producto producto = new Producto(productoDto);
+			ciudadano.canjearPuntos(producto);
+		} finally {
+			desconectarDB();
+		}
 	}
 
 	public void listarCanjes() {
-		ObjectSet<Canje> canjes = canjeDAO.buscarTodos(db);
-		for (Canje canje : canjes) {
-			System.out.println("Canje: " + canje.toString());
-
+		conectarDB();
+		try {
+			ObjectSet<Canje> canjes = canjeDAO.buscarTodos(db);
+			for (Canje canje : canjes) {
+				System.out.println("Canje: " + canje.toString());
+			}
+		} finally {
+			desconectarDB();
 		}
 	}
 }

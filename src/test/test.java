@@ -1,14 +1,11 @@
 package test;
 
-import java.util.List;
-
 import api.Api;
 import dto.CatalogoDTO;
 import dto.CategoriaDTO;
 import dto.CiudadanoDTO;
-import dto.EventoDTO;
 import dto.ProductoDTO;
-import dto.ReclamoDTO;
+import modelo.ProveedorDelTiempo;
 
 public class test {
 
@@ -17,8 +14,8 @@ public class test {
 	public static void main(String[] args) {
 		creacionDATOS();
 
-		api.conectarDB();
-
+//		api.conectarDB();
+		/*
 		// La vista crea un nuevo ciudadano, api devuelve un ciudadanoDTO con id
 		// correspodniente
 		CiudadanoDTO ciudadanoDto1 = new CiudadanoDTO("Javier", "Valsecchi", 35591732, "javier@javier.com");
@@ -45,9 +42,9 @@ public class test {
 		// Eliminar Evento de un reclamo
 		api.eliminarEventoDeReclamo(lreclamosDto.get(0), eventoDto1);
 		api.listarEventosReclamo(lreclamosDto.get(0));
-
+	*/
 		CiudadanoDTO ciudadanoDto2 = new CiudadanoDTO(null, "Guillermo", "Difabio", 36849832, "guille@gmail.com", 100,
-				null, null);
+				null, null, new ProveedorDelTiempo("2016-08-22T10:11:30"));
 		CiudadanoDTO ciudadanoDto3 = new CiudadanoDTO(null, "Roberto", "Perez", 38567432, "robertoperez@gmail.com", 10,
 				null, null);
 
@@ -88,13 +85,21 @@ public class test {
 		api.listarCanjes();
 		api.listarCiudadanos();
 
-		api.desconectarDB();
+//		api.desconectarDB();
 
 		System.out.println("Fin del Test");
+		
+//		try {
+//			
+//		} catch (Exception e) {
+//			// TODO: handle exception
+//		} finally {
+//			
+//		}
 	}
 
 	public static void creacionDATOS() {
-		api.conectarDB();
+//		api.conectarDB();
 
 		CategoriaDTO categoriaDto = new CategoriaDTO("Derrumbe", "Todo se cae", 10);
 		CategoriaDTO categoriaDto1 = new CategoriaDTO("Arboles", "Cortar Arboles", 2);
@@ -107,7 +112,7 @@ public class test {
 		categoriaDto3 = api.crearCategoria(categoriaDto3);
 		categoriaDto4 = api.crearCategoria(categoriaDto4);
 
-		api.desconectarDB();
+//		api.desconectarDB();
 	}
 
 }
